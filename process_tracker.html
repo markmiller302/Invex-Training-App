@@ -241,17 +241,31 @@ let itemIdMap={}, pollTimer=null;
 
 // ── MSAL / TOKEN ────────────────────────────────────────────────────
 async function getToken(){
-  const accounts=msalApp.getAllAccounts();
-  if(!accounts.length){
-    const res=await msalApp.loginPopup({scopes:GRAPH_SCOPES});
-    return res.accessToken;
-  }
-  try{
-    const res=await msalApp.acquireTokenSilent({scopes:GRAPH_SCOPES,account:accounts[0]});
-    return res.accessToken;
-  }catch(e){
-    const res=await msalApp.acquireTokenPopup({scopes:GRAPH_SCOPES,account:accounts[0]});
-    return res.accessToken;
+  try {
+    const account = msalApp.getActiveAccount() || msalApp.getAllAccounts()[0];
+    if (!account) {
+      // No account cached — kick off a redirect login. Caller will see null.
+      await msalApp.loginRedirect({ scopes: SCOPES });
+      return null;
+    }
+    const result = await msalApp.acquireTokenSilent({
+      scopes: SCOPES,
+      account
+    });
+    return result.accessToken;
+  } catch (err) {
+    // Silent failed — interaction required. Use redirect, not popup,
+    // because this page may itself be a popup/new tab where nested popups are blocked.
+    if (err && (err.name === 'InteractionRequiredAuthError' ||
+                err.errorCode === 'interaction_required' ||
+                err.errorCode === 'login_required' ||
+                err.errorCode === 'consent_required')) {
+      await msalApp.acquireTokenRedirect({ scopes: SCOPES });
+      return null;
+    }
+    // Any other failure (network, popup blocked, etc.) — surface as offline
+    console.error('getToken failed:', err);
+    throw err;
   }
 }
 
@@ -295,22 +309,61 @@ function setConn(state){
 
 async function initGraph(){
   setConn('connecting');
-  try{
-    const site=await gGet('/sites/'+SP_HOST+':'+SP_SITE_PATH);
-    siteId=site.id;
-    const [sl,al]=await Promise.all([
-      gGet('/sites/'+siteId+'/lists/InvexTrackerSteps'),
-      gGet('/sites/'+siteId+'/lists/InvexTrackerActivity')
-    ]);
-    stepsListId=sl.id; activityListId=al.id;
+  try {
+    // MSAL v2.38+ requires explicit initialization
+    if (typeof msalApp.initialize === 'function') {
+      await msalApp.initialize();
+    }
+
+    // Consume any redirect response that just landed on this page
+    const redirectResponse = await msalApp.handleRedirectPromise();
+    if (redirectResponse && redirectResponse.account) {
+      msalApp.setActiveAccount(redirectResponse.account);
+    }
+
+    // If we already have a cached account, use it; otherwise trigger a redirect sign-in
+    let account = msalApp.getActiveAccount();
+    if (!account) {
+      const accounts = msalApp.getAllAccounts();
+      if (accounts.length > 0) {
+        account = accounts[0];
+        msalApp.setActiveAccount(account);
+      }
+    }
+
+    if (!account) {
+      // No cached session — redirect to Microsoft to sign in.
+      // The page will navigate away and return; handleRedirectPromise above will pick up the response.
+      setConn('connecting');
+      await msalApp.loginRedirect({ scopes: SCOPES });
+      return; // navigation happens, nothing else runs
+    }
+
+    // Verify we can actually get a token for Graph before flipping to 'live'
+    const token = await getToken();
+    if (!token) {
+      setConn('offline');
+      return;
+    }
+
     setConn('live');
-    renderTabs();
-    startPolling(cur);
-  }catch(e){
-    console.error('Graph init failed:',e);
+
+    // Resolve the SharePoint site id once we have a token (preserves existing behavior)
+    try {
+      const siteResp = await fetch(
+        'https://graph.microsoft.com/v1.0/sites/' + SITE + ':' + SITE_PATH,
+        { headers: { Authorization: 'Bearer ' + token } }
+      );
+      if (siteResp.ok) {
+        const siteData = await siteResp.json();
+        window.__siteId = siteData.id;
+      }
+    } catch (e) {
+      console.warn('Site resolve failed:', e);
+    }
+  } catch (err) {
+    console.error('Graph init failed:', err);
     setConn('offline');
-    SCENARIOS.forEach(s=>{liveData[s.id]={};});
-    renderTabs();renderStatBar();renderMain();
   }
 }
 
