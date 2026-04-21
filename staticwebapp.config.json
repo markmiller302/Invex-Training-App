@@ -1,0 +1,21 @@
+{
+  "mimeTypes": {
+    ".html": "text/html"
+  },
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": ["/api/*"]
+  },
+  "routes": [
+    {
+      "route": "/index.html",
+      "headers": {
+        "Content-Type": "text/html"
+      }
+    },
+    {
+      "route": "/*",
+      "rewrite": "/index.html"
+    }
+  ]
+}
