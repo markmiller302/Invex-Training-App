@@ -4,9 +4,15 @@
   },
   "navigationFallback": {
     "rewrite": "/index.html",
-    "exclude": ["/api/*"]
+    "exclude": ["/api/*", "/process_tracker.html"]
   },
   "routes": [
+    {
+      "route": "/process_tracker.html",
+      "headers": {
+        "Content-Type": "text/html"
+      }
+    },
     {
       "route": "/index.html",
       "headers": {
