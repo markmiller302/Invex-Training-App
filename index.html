@@ -7026,17 +7026,83 @@ function renderPMLibrary() {
 }
 
 
+// ── BLOB STORAGE API LAYER ────────────────────────────────────────────────────
+// All user progress is read/written via Azure Functions backed by Blob Storage.
+// Theme preference stays in localStorage (cosmetic only, per-device is fine).
+const StorageAPI = {
+  _userId: null,
+
+  // Called once at login — sets the key used for all subsequent calls
+  setUser(name, dept, role) {
+    this._userId = encodeURIComponent((name + '_' + dept).toLowerCase().replace(/\s+/g,'_'));
+    // Also cache in sessionStorage so page refreshes don't lose the identity
+    // (a full re-login will re-fetch from blob)
+    try {
+      sessionStorage.setItem('training_user_name', name);
+      sessionStorage.setItem('training_user_dept', dept);
+      sessionStorage.setItem('training_user_role', role);
+    } catch(e) {}
+  },
+
+  getLocal(key) {
+    try { return sessionStorage.getItem(key); } catch(e) { return null; }
+  },
+
+  // Save the full progress snapshot for the current user
+  async saveProgress(data) {
+    if (!this._userId) return;
+    try {
+      await fetch('/api/saveProgress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: this._userId, data })
+      });
+    } catch(e) { console.warn('saveProgress failed', e); }
+  },
+
+  // Load the full progress snapshot for the current user
+  async loadProgress() {
+    if (!this._userId) return null;
+    try {
+      const res = await fetch('/api/getProgress?userId=' + this._userId);
+      if (!res.ok) return null;
+      return await res.json();
+    } catch(e) { return null; }
+  },
+
+  // Build and save a full snapshot of current state
+  async snapshot() {
+    const name = this.getLocal('training_user_name') || '';
+    const dept = this.getLocal('training_user_dept') || '';
+    const role = this.getLocal('training_user_role') || 'trainee';
+    const quizStates = {};
+    for (let d = 1; d <= 5; d++) {
+      try {
+        const s = sessionStorage.getItem('invex_quiz_d' + d);
+        if (s) quizStates[d] = JSON.parse(s);
+      } catch(e) {}
+    }
+    let facConfig = null;
+    try {
+      const s = sessionStorage.getItem('fac_path_config');
+      if (s) facConfig = JSON.parse(s);
+    } catch(e) {}
+    await this.saveProgress({ name, dept, role, quizStates, facConfig, savedAt: new Date().toISOString() });
+  }
+};
+
 // ── FACILITATOR CONFIGURATOR ──────────────────────────────────────────────────
 const FC_DEPTS = ['Sales','Purchasing','Production Planning','Job Scheduling','Production Recording','Shipping','Receiving','Inventory','Quality'];
 let FC = { all: [], 2: null, 3: null, 4: null }; // null per-day = inherit from FC.all
 let FC_DAY = 'all';
 
 function loadFacConfig() {
-  try { const s = localStorage.getItem('fac_path_config'); if (s) FC = JSON.parse(s); } catch(e) {}
+  try { const s = sessionStorage.getItem('fac_path_config'); if (s) FC = JSON.parse(s); } catch(e) {}
 }
 
 function saveFacConfig() {
-  localStorage.setItem('fac_path_config', JSON.stringify(FC));
+  try { sessionStorage.setItem('fac_path_config', JSON.stringify(FC)); } catch(e) {}
+  StorageAPI.snapshot(); // persist to blob
 }
 
 function openFacConfig() {
@@ -7110,7 +7176,7 @@ function updateFacHint(current, inherited) {
 }
 
 function resetFacConfig() {
-  const trainee = localStorage.getItem('training_user_dept') || 'All';
+  const trainee = sessionStorage.getItem('training_user_dept') || 'All';
   FC = { all: trainee === 'All' ? ['All'] : [trainee], 2: null, 3: null, 4: null };
   FC_DAY = 'all';
   document.querySelectorAll('.fac-cfg-day').forEach(b => b.classList.toggle('active', b.dataset.day === 'all'));
@@ -7236,7 +7302,7 @@ function applyFacilitatorMode(role) {
   const cfgBtn = document.getElementById('fac-cfg-launch-btn');
   if (cfgBtn) cfgBtn.style.display = 'block';
   // Restore saved fac config and re-apply if it exists
-  const saved = localStorage.getItem('fac_path_config');
+  const saved = sessionStorage.getItem('fac_path_config');
   if (saved) {
     try {
       FC = JSON.parse(saved);
@@ -7268,14 +7334,28 @@ function toggleCodeField(btn) {
   select.addEventListener('change', checkReady);
   input.addEventListener('keydown', e => { if (e.key === 'Enter' && !btn.disabled) submitLogin(); });
 
-  const savedName = localStorage.getItem('training_user_name');
-  const savedDept = localStorage.getItem('training_user_dept');
-  const savedRole = localStorage.getItem('training_user_role') || 'trainee';
+  const savedName = sessionStorage.getItem('training_user_name');
+  const savedDept = sessionStorage.getItem('training_user_dept');
+  const savedRole = sessionStorage.getItem('training_user_role') || 'trainee';
 
   if (savedName) {
+    // Re-hydrate StorageAPI identity from session
+    StorageAPI.setUser(savedName, savedDept || '', savedRole);
     setUserName(savedName);
     if (savedDept) applyLearningPath(savedDept);
     if (savedRole !== 'trainee') applyFacilitatorMode(savedRole);
+    // Restore quiz states from blob in the background
+    StorageAPI.loadProgress().then(prog => {
+      if (!prog) return;
+      if (prog.quizStates) {
+        Object.entries(prog.quizStates).forEach(([d, state]) => {
+          try { sessionStorage.setItem('invex_quiz_d' + d, JSON.stringify(state)); } catch(e) {}
+        });
+      }
+      if (prog.facConfig) {
+        try { sessionStorage.setItem('fac_path_config', JSON.stringify(prog.facConfig)); } catch(e) {}
+      }
+    });
   } else {
     document.getElementById('login-overlay').classList.remove('hidden');
     setTimeout(() => input.focus(), 80);
@@ -7292,14 +7372,21 @@ function submitLogin() {
   if (code === FAC_CODE.toUpperCase())   role = 'facilitator';
   if (code === ADMIN_CODE.toUpperCase()) role = 'admin';
 
-  localStorage.setItem('training_user_name', name);
-  localStorage.setItem('training_user_dept', dept);
-  localStorage.setItem('training_user_role', role);
+  // Store identity in sessionStorage (tab-scoped; blob is the durable store)
+  try {
+    sessionStorage.setItem('training_user_name', name);
+    sessionStorage.setItem('training_user_dept', dept);
+    sessionStorage.setItem('training_user_role', role);
+  } catch(e) {}
 
   setUserName(name);
   applyLearningPath(dept);
   if (role !== 'trainee') applyFacilitatorMode(role);
   document.getElementById('login-overlay').classList.add('hidden');
+
+  // Set StorageAPI identity and persist to blob
+  StorageAPI.setUser(name, dept, role);
+  StorageAPI.snapshot();
 }
 
 function setUserName(name) {
@@ -7313,8 +7400,8 @@ function setUserName(name) {
 }
 
 function changeUser() {
-  const curName = localStorage.getItem('training_user_name') || '';
-  const curDept = localStorage.getItem('training_user_dept') || '';
+  const curName = sessionStorage.getItem('training_user_name') || '';
+  const curDept = sessionStorage.getItem('training_user_dept') || '';
   const input  = document.getElementById('login-name-input');
   const select = document.getElementById('login-dept-select');
   input.value  = curName;
@@ -7412,11 +7499,12 @@ var QUIZ_DATA = {
 var activeQuiz = {};
 
 function qzGetState(day) {
-  var s = localStorage.getItem('invex_quiz_d' + day);
+  var s = sessionStorage.getItem('invex_quiz_d' + day);
   return s ? JSON.parse(s) : {attempts:0, bestScore:-1, passed:false};
 }
 function qzSaveState(day, state) {
-  localStorage.setItem('invex_quiz_d' + day, JSON.stringify(state));
+  sessionStorage.setItem('invex_quiz_d' + day, JSON.stringify(state));
+  StorageAPI.snapshot(); // persist quiz progress to blob
 }
 
 function startQuiz(day) {
@@ -7489,7 +7577,7 @@ function qzShowResult(day, score, answers, questions) {
   var state = qzGetState(day);
   var passed = score >= 8;
   var attLeft = 3 - state.attempts;
-  var userName = localStorage.getItem('training_user_name') || 'Trainee';
+  var userName = sessionStorage.getItem('training_user_name') || 'Trainee';
   var labels = ['A','B','C','D'];
   var reviewHtml = '<div class="quiz-review-title">Question Review</div>';
   questions.forEach(function(qd,i){
