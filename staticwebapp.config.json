@@ -8,6 +8,10 @@
   },
   "routes": [
     {
+      "route": "/api/*",
+      "allowedRoles": ["anonymous"]
+    },
+    {
       "route": "/process_tracker.html",
       "headers": {
         "Content-Type": "text/html"
