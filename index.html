@@ -2417,7 +2417,7 @@ html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:va
     <div id="d3-supplemental">
       <div class="section-hdr"><div class="section-hdr-title">Supplemental Exercises &mdash; Extra Practice</div><div class="section-hdr-line"></div></div>
       <div class="d5-intro-note">
-        Finished early? Each card below is a real customer PO for a contract sale. <strong style="color:var(--warn)">Exercises 1 &amp; 2:</strong> require creating a blanket order in Invex first &mdash; the job numbers and release quantities are the cue that a blanket framework must exist before you enter individual release lines. <strong style="color:var(--warn)">Exercise 3 (Advanced Steel Technology):</strong> straight contract sale &mdash; no blanket needed &mdash; but tests <strong>metric dimension entry</strong> (all specs in mm and kg), Toyota Purchasing Program compliance, 5-item stenciling requirements, and appointment-only delivery logistics.
+        Finished early? Each card below is a real customer PO for a contract sale. <strong style="color:var(--warn)">Exercises 1 &amp; 2:</strong> require creating a blanket order in Invex first &mdash; the job numbers and release quantities are the cue that a blanket framework must exist before you enter individual release lines. <strong style="color:var(--warn)">Exercise 3 (Advanced Steel Technology):</strong> straight contract sale &mdash; no blanket needed &mdash; but tests <strong>metric dimension entry</strong> (all specs in mm and kg), Toyota Purchasing Program compliance, 5-item stenciling requirements, and appointment-only delivery logistics. <strong style="color:var(--warn)">Exercises 4&ndash;6 (Sheet Metal Components):</strong> multi-line HRPO sheet &amp; plate orders priced <strong>per EA</strong> (each piece) &mdash; tests mixed gauge and grade entry (A36, A572 GR50, A1011 CS, HSLA/A715 GR50) across 6&ndash;7 line items with tight lead times. <strong style="color:var(--warn)">Exercises 7 &amp; 8 (SMF):</strong> repeat contract plate orders &mdash; tests <strong>LB pricing</strong>, mixed metric/imperial spec entry (10MM thickness with inch width &amp; length), customer part number cross-reference, and price-change awareness on a repeat order. <strong style="color:var(--warn)">Exercises 9 &amp; 10 (Interstate Sheet Metal):</strong> TP100 abrasion-resistant specialty plate orders &mdash; tests <strong>specialty product sourcing</strong> (TP100/AR100 vs. standard grades), mixed unit-of-measure entry (PC, EA, SH on same PO), non-standard cut sizes, feet-to-inch dimension conversion, FOB Delivered freight handling, .5%10 N30 early-pay terms, and MTR compliance on all line items. Exercise 10 adds a mixed-product challenge: TP100 and standard GR50 HRPO sheet on the same order.
       </div>
 
       <!-- ── Exercise 1: Taylor Manufacturing PO 50800 ── -->
@@ -2715,6 +2715,824 @@ html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:va
                 </div>
               </div>
               <textarea class="up-notes-area" style="margin-top:.75rem" placeholder="Notes — SO#, how you entered metric dimensions vs. inches, qty confirmation process with AST, stencil verification steps, appointment email sent, observations..."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Exercise 4: Sheet Metal Components PO 54135 ── -->
+      <div class="sc-card">
+        <div class="sc-header" onclick="toggleCard('d3sup4')">
+          <div class="diff-badge diff-i">Exercise 4</div>
+          <div class="sc-title">Contract Sale entry &mdash; Sheet Metal Components PO #54135</div>
+          <div class="sc-cust">Sheet Metal Components &mdash; 6 lines &mdash; HRPO plate &amp; sheet &mdash; priced per EA &mdash; A36, A572 GR50, A1011 CS &mdash; due 04/13/26</div>
+          <div class="sc-status" id="st-d3sup4" onclick="cycleStatus(event,'d3sup4')">Not started</div>
+          <div class="sc-toggle" id="tog-d3sup4">&#9660;</div>
+        </div>
+        <div class="sc-body" id="body-d3sup4">
+          <div class="sc-grid">
+            <div class="step-list-wrap">
+              <div class="sc-sec-lbl">Exercise checklist</div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Review PO &mdash; note pricing is <strong>per EA</strong> (each piece), not $/CWT or $/LB &mdash; 6 line items at different thicknesses, gauges, and grades &mdash; PO date 04/08/26, due 04/13/26 (5-day lead time)</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Note product type mix: Lines 1&ndash;5 are <strong>fractional plate</strong> (.500&Prime;, .375&Prime;, .312&Prime;, .250&Prime;); Line 6 is <strong>11 gauge sheet</strong> (A1011 CS) &mdash; ensure correct product class is selected in Invex for each line &mdash; plate and sheet are separate product categories</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Note grade complexity: Lines 1&ndash;3 and Line 5 are A36; Line 4 is <strong>A572 GR50</strong> (high-strength) &mdash; same .250&Prime; thickness as Line 5 but different grade and higher price &mdash; Line 6 is A1011 CS commercial sheet</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Enter Line 1: .500_HRPO_A36_60X120 &mdash; 4 ea &mdash; $574.49 EA &mdash; $2,297.96</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Enter Line 2: .375_HRPO_A36_48X96 &mdash; 9 ea &mdash; $276.74 EA &mdash; $2,490.66 &mdash; <em style="color:var(--muted)">48&Prime;&times;96&Prime; cut size (differs from other lines)</em></div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Enter Line 3: .312_HRPO_A36_48X96 &mdash; 10 ea &mdash; $230.61 EA &mdash; $2,306.10 &mdash; <em style="color:var(--muted)">48&Prime;&times;96&Prime; cut size</em></div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Enter Line 4: .250_HRPO_A572_GR50_60X120 &mdash; 18 ea &mdash; $293.37 EA &mdash; $5,280.66 &mdash; <em style="color:var(--muted)">high-strength plate: A572 GR50 &mdash; do not substitute A36</em></div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Enter Line 5: .250_HRPO_A36_60X120 &mdash; 18 ea &mdash; $285.77 EA &mdash; $5,143.86 &mdash; <em style="color:var(--muted)">same thickness &amp; size as L4, different grade &mdash; $7.60/EA price difference reflects grade premium</em></div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Enter Line 6: 11GA_HRPO_A1011CS_60X120 &mdash; 57 ea &mdash; $136.71 EA &mdash; $7,792.47 &mdash; <em style="color:var(--muted)">largest line by value and piece count; sheet class, not plate</em></div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Acct Mgr: Matt Blentlinger &mdash; Vendor: Steel Warehouse #774005 &mdash; Terms: NET 35 &mdash; Verify order total: $25,311.71 &mdash; log SO# in tracker</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Create purchase requisitions &mdash; separate for plate (L1&ndash;L5) and sheet (L6) &mdash; A572 GR50 (L4) requires grade-specific sourcing separate from A36 &mdash; confirm availability for 5-day lead time</div><span class="step-dept">Purchasing</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Approve requisitions</div><span class="step-dept">Purchasing</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Convert requisitions to POs &mdash; issue to mill or warehouse stock</div><span class="step-dept">Purchasing</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Create pre-receipt, receipt, and transfer as needed</div><span class="step-dept">Purchasing</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Receive all 116 total pieces &mdash; verify gauge, grade, and cut size per line &mdash; do not accept A36 in place of A572 GR50 for Line 4 &mdash; verify 48&Prime;&times;96&Prime; for L2/L3 and 60&Prime;&times;120&Prime; for L1/L4/L5/L6</div><span class="step-dept">Receiving</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Assign material to order &amp; create job sets</div><span class="step-dept">Production Planning</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Schedule &amp; run production &mdash; due 04/13/26</div><span class="step-dept">Job Scheduling</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Verify cut sizes: 48&Prime;&times;96&Prime; (L2, L3) and 60&Prime;&times;120&Prime; (L1, L4, L5, L6) &mdash; tag pieces by line and grade &mdash; keep A572 GR50 (L4) and A36 (L5) separated &mdash; 57 pcs of 11GA sheet processed separately</div><span class="step-dept">Production Recording</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Move finished material to staging &mdash; group by line item for loading</div><span class="step-dept">Inventory</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Create transport order &mdash; ship to Sheet Metal Components &mdash; due 04/13/26</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Stage &amp; load all 116 pieces &mdash; count per line against PO before loading &mdash; do not mix A572 GR50 and A36 material</div><span class="step-dept">Shipping</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Invoice shipment &mdash; Terms: NET 35 &mdash; log invoice# in tracker</div><span class="step-dept">Sales</span></div>
+            </div>
+            <div>
+              <div class="po-ref-wrap">
+                <div class="po-ref-lbl">Customer PO &mdash; Sheet Metal Components #54135</div>
+                <div class="po-doc">
+                  <div class="po-doc-hdr">
+                    <div class="po-doc-co">Sheet Metal Components</div>
+                    <div class="po-doc-po">
+                      <div class="po-doc-po-label">Purchase Order</div>
+                      <div class="po-doc-po-num">54135</div>
+                      <div class="po-doc-po-date">04/08/26 &nbsp;&bull;&nbsp; Acct Mgr: Matt Blentlinger &nbsp;&bull;&nbsp; Steel Warehouse #774005</div>
+                    </div>
+                  </div>
+                  <div class="po-doc-parties">
+                    <div>
+                      <div class="po-doc-party-lbl">Vendor</div>
+                      <div class="po-doc-party-val">Steel Warehouse #774005</div>
+                    </div>
+                    <div>
+                      <div class="po-doc-party-lbl">Customer</div>
+                      <div class="po-doc-party-val">Sheet Metal Components</div>
+                    </div>
+                    <div>
+                      <div class="po-doc-party-lbl">Terms / Due</div>
+                      <div class="po-doc-party-val">Due: <strong>04/13/26</strong><br>Terms: NET 35<br>Acct Mgr: Matt Blentlinger</div>
+                    </div>
+                  </div>
+                  <table class="po-doc-table">
+                    <thead><tr><th>Line</th><th>Part Number</th><th>Description</th><th>Qty</th><th>Unit</th><th class="td-num">Unit Price</th><th class="td-num">Extended</th></tr></thead>
+                    <tbody>
+                      <tr>
+                        <td>L001</td>
+                        <td class="td-tag">.500_HRPO<br>_A36_60X120</td>
+                        <td class="td-desc">HR Plate .500&Prime; P&amp;O, A36, 60&Prime;&times;120&Prime;</td>
+                        <td>4</td>
+                        <td>EA</td>
+                        <td class="td-num">$574.49</td>
+                        <td class="td-num">$2,297.96</td>
+                      </tr>
+                      <tr>
+                        <td>L002</td>
+                        <td class="td-tag">.375_HRPO<br>_A36_48X96</td>
+                        <td class="td-desc">HR Plate .375&Prime; P&amp;O, A36, 48&Prime;&times;96&Prime;</td>
+                        <td>9</td>
+                        <td>EA</td>
+                        <td class="td-num">$276.74</td>
+                        <td class="td-num">$2,490.66</td>
+                      </tr>
+                      <tr>
+                        <td>L003</td>
+                        <td class="td-tag">.312_HRPO<br>_A36_48X96</td>
+                        <td class="td-desc">HR Plate .312&Prime; P&amp;O, A36, 48&Prime;&times;96&Prime;</td>
+                        <td>10</td>
+                        <td>EA</td>
+                        <td class="td-num">$230.61</td>
+                        <td class="td-num">$2,306.10</td>
+                      </tr>
+                      <tr>
+                        <td>L004</td>
+                        <td class="td-tag">.250_HRPO_A572<br>_GR50_60X120</td>
+                        <td class="td-desc">HR Plate .250&Prime; P&amp;O, <strong>A572 GR50</strong>, 60&Prime;&times;120&Prime;<br><em style="font-size:9.5px;color:#666">High-strength &mdash; same size as L005, different grade</em></td>
+                        <td>18</td>
+                        <td>EA</td>
+                        <td class="td-num">$293.37</td>
+                        <td class="td-num">$5,280.66</td>
+                      </tr>
+                      <tr>
+                        <td>L005</td>
+                        <td class="td-tag">.250_HRPO<br>_A36_60X120</td>
+                        <td class="td-desc">HR Plate .250&Prime; P&amp;O, A36, 60&Prime;&times;120&Prime;<br><em style="font-size:9.5px;color:#666">Same thickness &amp; size as L004 &mdash; A36 grade</em></td>
+                        <td>18</td>
+                        <td>EA</td>
+                        <td class="td-num">$285.77</td>
+                        <td class="td-num">$5,143.86</td>
+                      </tr>
+                      <tr>
+                        <td>L006</td>
+                        <td class="td-tag">11GA_HRPO<br>_A1011CS<br>_60X120</td>
+                        <td class="td-desc">11 Gauge HR Sheet, A1011 CS, 60&Prime;&times;120&Prime;</td>
+                        <td>57</td>
+                        <td>EA</td>
+                        <td class="td-num">$136.71</td>
+                        <td class="td-num">$7,792.47</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div class="po-doc-footer">
+                    <div class="po-doc-footer-item">Total Pcs: 116</div>
+                    <div class="po-doc-footer-total">Order Total: $25,311.71</div>
+                  </div>
+                </div>
+              </div>
+              <textarea class="up-notes-area" style="margin-top:.75rem" placeholder="Notes — SO#, how you handled mixed gauges and grades, EA pricing entry, A572 GR50 sourcing, observations..."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Exercise 5: Sheet Metal Components PO 54142 ── -->
+      <div class="sc-card">
+        <div class="sc-header" onclick="toggleCard('d3sup5')">
+          <div class="diff-badge diff-i">Exercise 5</div>
+          <div class="sc-title">Contract Sale entry &mdash; Sheet Metal Components PO #54142</div>
+          <div class="sc-cust">Sheet Metal Components &mdash; 7 lines &mdash; HRPO plate &amp; sheet &mdash; priced per EA &mdash; A36, A572 GR50, A1011 CS, HSLA GR50 &mdash; due 04/15/26</div>
+          <div class="sc-status" id="st-d3sup5" onclick="cycleStatus(event,'d3sup5')">Not started</div>
+          <div class="sc-toggle" id="tog-d3sup5">&#9660;</div>
+        </div>
+        <div class="sc-body" id="body-d3sup5">
+          <div class="sc-grid">
+            <div class="step-list-wrap">
+              <div class="sc-sec-lbl">Exercise checklist</div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Review PO &mdash; 7-line order from Sheet Metal Components, PO date 04/09/26, due 04/15/26 &mdash; all priced <strong>per EA</strong> &mdash; introduces 7 GA gauge sheet and HSLA GR50 material not seen on PO #54135</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Note grade complexity across 7 lines: Line 1 is .312&Prime; <strong>A572 GR50 plate</strong> (high-strength); Lines 2&ndash;3 are A36 plate; Lines 4/6/7 are gauge sheet (7GA and 12GA A1011 CS commercial); Line 5 is <strong>7GA HSLA GR50</strong> &mdash; same gauge as L4 but different grade at a premium price &mdash; three distinct grade families on one PO</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Enter Line 1: .312_HRPO_A572_GR50_60X120 &mdash; 14 ea &mdash; $366.72 EA &mdash; $5,134.08 &mdash; <em style="color:var(--muted)">high-strength plate, A572 GR50</em></div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Enter Line 2: .250_HRPO_A36_60X120 &mdash; 9 ea &mdash; $285.77 EA &mdash; $2,571.93</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Enter Line 3: .188_HRPO_A36_60X120 &mdash; 13 ea &mdash; $214.33 EA &mdash; $2,786.29</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Enter Line 4: 7GA_HRPO_A1011CS_60X120 &mdash; 26 ea &mdash; $204.95 EA &mdash; $5,328.70</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Enter Line 5: 7GA_HRPO_HSLA_60X120 (HSLA GR50) &mdash; 13 ea &mdash; $210.41 EA &mdash; $2,735.33 &mdash; <em style="color:var(--muted)">same gauge as L4 &mdash; higher-strength grade commands $5.46/EA premium over A1011 CS</em></div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Enter Line 6: 11GA_HRPO_A1011CS_60X120 &mdash; 38 ea &mdash; $136.71 EA &mdash; $5,194.98</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Enter Line 7: 12GA_HRPO_A1011CS_60X120 &mdash; 22 ea &mdash; $119.56 EA &mdash; $2,630.32</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Terms: NET 35 &mdash; Verify order total: $26,381.63 &mdash; log SO# in tracker</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Create purchase requisitions &mdash; plate reqs (L1&ndash;L3) and sheet reqs (L4&ndash;L7) &mdash; A572 GR50 plate and HSLA GR50 sheet require grade-specific sourcing; do not source A36/A1011 CS as substitutes</div><span class="step-dept">Purchasing</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Approve requisitions</div><span class="step-dept">Purchasing</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Convert requisitions to POs &mdash; issue to mill or warehouse stock</div><span class="step-dept">Purchasing</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Create pre-receipt, receipt, and transfer as needed</div><span class="step-dept">Purchasing</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Receive all 135 total pieces &mdash; verify gauge, grade, and cut size per line &mdash; critical: do not substitute A36 for A572 GR50 (L1) or A1011 CS for HSLA GR50 (L5) &mdash; all cut sizes are 60&Prime;&times;120&Prime; on this PO</div><span class="step-dept">Receiving</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Assign material to order &amp; create job sets</div><span class="step-dept">Production Planning</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Schedule &amp; run production &mdash; due 04/15/26</div><span class="step-dept">Job Scheduling</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Process material &mdash; all 7 lines cut to 60&Prime;&times;120&Prime; &mdash; tag pieces by line and grade to prevent mixing &mdash; keep HSLA GR50 (L5) and A1011 CS (L4) separate despite same gauge</div><span class="step-dept">Production Recording</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Move finished material to staging &mdash; group by line item</div><span class="step-dept">Inventory</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Create transport order &mdash; ship to Sheet Metal Components &mdash; due 04/15/26</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Stage &amp; load all 135 pcs &mdash; count per line against PO &mdash; do not mix grade families on load</div><span class="step-dept">Shipping</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Invoice shipment &mdash; Terms: NET 35 &mdash; log invoice# in tracker</div><span class="step-dept">Sales</span></div>
+            </div>
+            <div>
+              <div class="po-ref-wrap">
+                <div class="po-ref-lbl">Customer PO &mdash; Sheet Metal Components #54142</div>
+                <div class="po-doc">
+                  <div class="po-doc-hdr">
+                    <div class="po-doc-co">Sheet Metal Components</div>
+                    <div class="po-doc-po">
+                      <div class="po-doc-po-label">Purchase Order</div>
+                      <div class="po-doc-po-num">54142</div>
+                      <div class="po-doc-po-date">04/09/26 &nbsp;&bull;&nbsp; Terms: NET 35 &nbsp;&bull;&nbsp; Steel Warehouse #774005</div>
+                    </div>
+                  </div>
+                  <div class="po-doc-parties">
+                    <div>
+                      <div class="po-doc-party-lbl">Vendor</div>
+                      <div class="po-doc-party-val">Steel Warehouse #774005</div>
+                    </div>
+                    <div>
+                      <div class="po-doc-party-lbl">Customer</div>
+                      <div class="po-doc-party-val">Sheet Metal Components</div>
+                    </div>
+                    <div>
+                      <div class="po-doc-party-lbl">Terms / Due</div>
+                      <div class="po-doc-party-val">Due: <strong>04/15/26</strong><br>Terms: NET 35</div>
+                    </div>
+                  </div>
+                  <table class="po-doc-table">
+                    <thead><tr><th>Line</th><th>Part Number</th><th>Description</th><th>Qty</th><th>Unit</th><th class="td-num">Unit Price</th><th class="td-num">Extended</th></tr></thead>
+                    <tbody>
+                      <tr>
+                        <td>L001</td>
+                        <td class="td-tag">.312_HRPO_A572<br>_GR50_60X120</td>
+                        <td class="td-desc">HR Plate .312&Prime; P&amp;O, <strong>A572 GR50</strong>, 60&Prime;&times;120&Prime;</td>
+                        <td>14</td>
+                        <td>EA</td>
+                        <td class="td-num">$366.72</td>
+                        <td class="td-num">$5,134.08</td>
+                      </tr>
+                      <tr>
+                        <td>L002</td>
+                        <td class="td-tag">.250_HRPO<br>_A36_60X120</td>
+                        <td class="td-desc">HR Plate .250&Prime; P&amp;O, A36, 60&Prime;&times;120&Prime;</td>
+                        <td>9</td>
+                        <td>EA</td>
+                        <td class="td-num">$285.77</td>
+                        <td class="td-num">$2,571.93</td>
+                      </tr>
+                      <tr>
+                        <td>L003</td>
+                        <td class="td-tag">.188_HRPO<br>_A36_60X120</td>
+                        <td class="td-desc">HR Plate .188&Prime; P&amp;O, A36, 60&Prime;&times;120&Prime;</td>
+                        <td>13</td>
+                        <td>EA</td>
+                        <td class="td-num">$214.33</td>
+                        <td class="td-num">$2,786.29</td>
+                      </tr>
+                      <tr>
+                        <td>L004</td>
+                        <td class="td-tag">7GA_HRPO<br>_A1011CS<br>_60X120</td>
+                        <td class="td-desc">7 Gauge HR Sheet, A1011 CS, 60&Prime;&times;120&Prime;</td>
+                        <td>26</td>
+                        <td>EA</td>
+                        <td class="td-num">$204.95</td>
+                        <td class="td-num">$5,328.70</td>
+                      </tr>
+                      <tr>
+                        <td>L005</td>
+                        <td class="td-tag">7GA_HRPO<br>_HSLA_60X120</td>
+                        <td class="td-desc">7 Gauge HR Sheet, <strong>HSLA GR50</strong>, 60&Prime;&times;120&Prime;<br><em style="font-size:9.5px;color:#666">Same gauge as L004 &mdash; higher-strength grade</em></td>
+                        <td>13</td>
+                        <td>EA</td>
+                        <td class="td-num">$210.41</td>
+                        <td class="td-num">$2,735.33</td>
+                      </tr>
+                      <tr>
+                        <td>L006</td>
+                        <td class="td-tag">11GA_HRPO<br>_A1011CS<br>_60X120</td>
+                        <td class="td-desc">11 Gauge HR Sheet, A1011 CS, 60&Prime;&times;120&Prime;</td>
+                        <td>38</td>
+                        <td>EA</td>
+                        <td class="td-num">$136.71</td>
+                        <td class="td-num">$5,194.98</td>
+                      </tr>
+                      <tr>
+                        <td>L007</td>
+                        <td class="td-tag">12GA_HRPO<br>_A1011CS<br>_60X120</td>
+                        <td class="td-desc">12 Gauge HR Sheet, A1011 CS, 60&Prime;&times;120&Prime;</td>
+                        <td>22</td>
+                        <td>EA</td>
+                        <td class="td-num">$119.56</td>
+                        <td class="td-num">$2,630.32</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div class="po-doc-footer">
+                    <div class="po-doc-footer-item">Total Pcs: 135</div>
+                    <div class="po-doc-footer-total">Order Total: $26,381.63</div>
+                  </div>
+                </div>
+              </div>
+              <textarea class="up-notes-area" style="margin-top:.75rem" placeholder="Notes — SO#, grade sourcing for A572 GR50 and HSLA GR50, how you handled mixed grade families, observations..."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Exercise 6: Sheet Metal Components PO 54161 ── -->
+      <div class="sc-card">
+        <div class="sc-header" onclick="toggleCard('d3sup6')">
+          <div class="diff-badge diff-i">Exercise 6</div>
+          <div class="sc-title">Contract Sale entry &mdash; Sheet Metal Components PO #54161</div>
+          <div class="sc-cust">Sheet Metal Components &mdash; 7 lines &mdash; HRPO plate &amp; sheet &mdash; priced per EA &mdash; A36, A572 GR50, A1011 CS, A715 GR50 &mdash; due 04/21/26</div>
+          <div class="sc-status" id="st-d3sup6" onclick="cycleStatus(event,'d3sup6')">Not started</div>
+          <div class="sc-toggle" id="tog-d3sup6">&#9660;</div>
+        </div>
+        <div class="sc-body" id="body-d3sup6">
+          <div class="sc-grid">
+            <div class="step-list-wrap">
+              <div class="sc-sec-lbl">Exercise checklist</div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Review PO &mdash; 7-line order, PO date 04/15/26, due 04/21/26 &mdash; all priced <strong>per EA</strong> &mdash; note Line 7 specifies <strong>A715 GR50</strong> (HSLA family, different ASTM spec from A1011 CS at same gauge) &mdash; do not substitute A1011 CS</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Note product type mix: Lines 1&ndash;3 are fractional plate (.375&Prime;, .250&Prime;, .188&Prime;); Lines 4&ndash;7 are gauge sheet (7GA, 10GA, 11GA) &mdash; note Line 1 cut size is 48&Prime;&times;96&Prime; while all other lines are 60&Prime;&times;120&Prime;</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Enter Line 1: .375_HRPO_A36_48X96 &mdash; 9 ea &mdash; $276.74 EA &mdash; $2,490.66 &mdash; <em style="color:var(--muted)">48&Prime;&times;96&Prime; cut size (only line on this PO not 60&Prime;&times;120&Prime;)</em></div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Enter Line 2: .250_HRPO_A572_GR50_60X120 &mdash; 9 ea &mdash; $293.37 EA &mdash; $2,640.33 &mdash; <em style="color:var(--muted)">high-strength plate</em></div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Enter Line 3: .188_HRPO_A36_60X120 &mdash; 12 ea &mdash; $214.33 EA &mdash; $2,571.96</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Enter Line 4: 7GA_HRPO_A1011CS_60X120 &mdash; 13 ea &mdash; $204.95 EA &mdash; $2,664.35</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Enter Line 5: 10GA_HRPO_A1011CS_60X120 &mdash; 34 ea &mdash; $153.74 EA &mdash; $5,227.16 &mdash; <em style="color:var(--muted)">largest piece-count line</em></div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Enter Line 6: 11GA_HRPO_A1011CS_60X120 &mdash; 38 ea &mdash; $136.71 EA &mdash; $5,194.98</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Enter Line 7: 11GA_HRPO_HSLA_G50 (A715 GR50) &mdash; 18 ea &mdash; $140.35 EA &mdash; $2,526.30 &mdash; <em style="color:var(--muted)">same gauge as L6 &mdash; A715 GR50 HSLA at $3.64/EA premium over A1011 CS</em></div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Terms: NET 35 &mdash; Verify order total: $23,315.74 &mdash; log SO# in tracker</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Create purchase requisitions &mdash; plate reqs (L1&ndash;L3) and sheet reqs (L4&ndash;L7) &mdash; A572 GR50 (L2) and A715 GR50 (L7) require separate grade-specific sourcing</div><span class="step-dept">Purchasing</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Approve requisitions</div><span class="step-dept">Purchasing</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Convert requisitions to POs &mdash; issue to mill or warehouse stock</div><span class="step-dept">Purchasing</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Create pre-receipt, receipt, and transfer as needed</div><span class="step-dept">Purchasing</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Receive all 133 total pieces &mdash; verify gauge, grade, and cut size &mdash; Line 1 is 48&Prime;&times;96&Prime;; all others are 60&Prime;&times;120&Prime; &mdash; keep A715 GR50 (L7) separate from A1011 CS (L4&ndash;L6) at same 11GA gauge</div><span class="step-dept">Receiving</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Assign material to order &amp; create job sets</div><span class="step-dept">Production Planning</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Schedule &amp; run production &mdash; due 04/21/26</div><span class="step-dept">Job Scheduling</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Process material &mdash; note L1 cut size (48&Prime;&times;96&Prime;) differs from all other lines (60&Prime;&times;120&Prime;) &mdash; tag A715 GR50 pieces (L7) separately from A1011 CS pieces (L4&ndash;L6) despite same 11GA gauge</div><span class="step-dept">Production Recording</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Move finished material to staging &mdash; group by line item</div><span class="step-dept">Inventory</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Create transport order &mdash; ship to Sheet Metal Components &mdash; due 04/21/26</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Stage &amp; load &mdash; count 133 pcs (9 at 48&Prime;&times;96&Prime; + 124 at 60&Prime;&times;120&Prime;) &mdash; ship on time</div><span class="step-dept">Shipping</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Invoice shipment &mdash; Terms: NET 35 &mdash; log invoice# in tracker</div><span class="step-dept">Sales</span></div>
+            </div>
+            <div>
+              <div class="po-ref-wrap">
+                <div class="po-ref-lbl">Customer PO &mdash; Sheet Metal Components #54161</div>
+                <div class="po-doc">
+                  <div class="po-doc-hdr">
+                    <div class="po-doc-co">Sheet Metal Components</div>
+                    <div class="po-doc-po">
+                      <div class="po-doc-po-label">Purchase Order</div>
+                      <div class="po-doc-po-num">54161</div>
+                      <div class="po-doc-po-date">04/15/26 &nbsp;&bull;&nbsp; Terms: NET 35 &nbsp;&bull;&nbsp; Steel Warehouse #774005</div>
+                    </div>
+                  </div>
+                  <div class="po-doc-parties">
+                    <div>
+                      <div class="po-doc-party-lbl">Vendor</div>
+                      <div class="po-doc-party-val">Steel Warehouse #774005</div>
+                    </div>
+                    <div>
+                      <div class="po-doc-party-lbl">Customer</div>
+                      <div class="po-doc-party-val">Sheet Metal Components</div>
+                    </div>
+                    <div>
+                      <div class="po-doc-party-lbl">Terms / Due</div>
+                      <div class="po-doc-party-val">Due: <strong>04/21/26</strong><br>Terms: NET 35</div>
+                    </div>
+                  </div>
+                  <table class="po-doc-table">
+                    <thead><tr><th>Line</th><th>Part Number</th><th>Description</th><th>Qty</th><th>Unit</th><th class="td-num">Unit Price</th><th class="td-num">Extended</th></tr></thead>
+                    <tbody>
+                      <tr>
+                        <td>L001</td>
+                        <td class="td-tag">.375_HRPO<br>_A36_48X96</td>
+                        <td class="td-desc">HR Plate .375&Prime; P&amp;O, A36, 48&Prime;&times;96&Prime;<br><em style="font-size:9.5px;color:#666">Only 48&Prime;&times;96&Prime; line on this PO</em></td>
+                        <td>9</td>
+                        <td>EA</td>
+                        <td class="td-num">$276.74</td>
+                        <td class="td-num">$2,490.66</td>
+                      </tr>
+                      <tr>
+                        <td>L002</td>
+                        <td class="td-tag">.250_HRPO_A572<br>_GR50_60X120</td>
+                        <td class="td-desc">HR Plate .250&Prime; P&amp;O, <strong>A572 GR50</strong>, 60&Prime;&times;120&Prime;</td>
+                        <td>9</td>
+                        <td>EA</td>
+                        <td class="td-num">$293.37</td>
+                        <td class="td-num">$2,640.33</td>
+                      </tr>
+                      <tr>
+                        <td>L003</td>
+                        <td class="td-tag">.188_HRPO<br>_A36_60X120</td>
+                        <td class="td-desc">HR Plate .188&Prime; P&amp;O, A36, 60&Prime;&times;120&Prime;</td>
+                        <td>12</td>
+                        <td>EA</td>
+                        <td class="td-num">$214.33</td>
+                        <td class="td-num">$2,571.96</td>
+                      </tr>
+                      <tr>
+                        <td>L004</td>
+                        <td class="td-tag">7GA_HRPO<br>_A1011CS<br>_60X120</td>
+                        <td class="td-desc">7 Gauge HR Sheet, A1011 CS, 60&Prime;&times;120&Prime;</td>
+                        <td>13</td>
+                        <td>EA</td>
+                        <td class="td-num">$204.95</td>
+                        <td class="td-num">$2,664.35</td>
+                      </tr>
+                      <tr>
+                        <td>L005</td>
+                        <td class="td-tag">10GA_HRPO<br>_A1011CS<br>_60X120</td>
+                        <td class="td-desc">10 Gauge HR Sheet, A1011 CS, 60&Prime;&times;120&Prime;</td>
+                        <td>34</td>
+                        <td>EA</td>
+                        <td class="td-num">$153.74</td>
+                        <td class="td-num">$5,227.16</td>
+                      </tr>
+                      <tr>
+                        <td>L006</td>
+                        <td class="td-tag">11GA_HRPO<br>_A1011CS<br>_60X120</td>
+                        <td class="td-desc">11 Gauge HR Sheet, A1011 CS, 60&Prime;&times;120&Prime;</td>
+                        <td>38</td>
+                        <td>EA</td>
+                        <td class="td-num">$136.71</td>
+                        <td class="td-num">$5,194.98</td>
+                      </tr>
+                      <tr>
+                        <td>L007</td>
+                        <td class="td-tag">11GA_HRPO<br>_HSLA_G50</td>
+                        <td class="td-desc">11 Gauge HR Sheet, <strong>A715 GR50</strong> (HSLA), 60&Prime;&times;120&Prime;<br><em style="font-size:9.5px;color:#666">Same gauge as L006 &mdash; high-strength HSLA grade</em></td>
+                        <td>18</td>
+                        <td>EA</td>
+                        <td class="td-num">$140.35</td>
+                        <td class="td-num">$2,526.30</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div class="po-doc-footer">
+                    <div class="po-doc-footer-item">Total Pcs: 133 &nbsp;&bull;&nbsp; L001: 48&Prime;&times;96&Prime; &nbsp;&bull;&nbsp; L002&ndash;L007: 60&Prime;&times;120&Prime;</div>
+                    <div class="po-doc-footer-total">Order Total: $23,315.74</div>
+                  </div>
+                </div>
+              </div>
+              <textarea class="up-notes-area" style="margin-top:.75rem" placeholder="Notes — SO#, A715 GR50 sourcing vs. A1011 CS, mixed cut sizes (48×96 vs. 60×120), observations..."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Exercise 7: SMF PO 75276 ── -->
+      <div class="sc-card">
+        <div class="sc-header" onclick="toggleCard('d3sup7')">
+          <div class="diff-badge diff-a">Exercise 7</div>
+          <div class="sc-title">Contract Sale entry &mdash; SMF PO #75276</div>
+          <div class="sc-cust">SMF &mdash; 1 line &mdash; 48,000 LB &mdash; 10MM HR plate, 64&Prime;&times;189&Prime; &mdash; LB pricing &mdash; customer part# MMP101E0170 &mdash; ship to Anderson, SC &mdash; due 08/05/25</div>
+          <div class="sc-status" id="st-d3sup7" onclick="cycleStatus(event,'d3sup7')">Not started</div>
+          <div class="sc-toggle" id="tog-d3sup7">&#9660;</div>
+        </div>
+        <div class="sc-body" id="body-d3sup7">
+          <div class="sc-grid">
+            <div class="step-list-wrap">
+              <div class="sc-sec-lbl">Exercise checklist</div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Review PO &mdash; customer is <strong>SMF</strong>, buyer Michael Massey (309-432-2586) &mdash; single line, 48,000 LB of 10MM HR plate &mdash; note <strong>mixed metric/imperial spec</strong>: thickness is 10MM but width/length are in inches (64&Prime;&times;189&Prime;) &mdash; cross-reference customer part# <strong>MMP101E0170</strong></div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Confirm pricing method: <strong>$0.55940/LB</strong> on 48,000 LB = $26,851.20 &mdash; pricing is per pound (LB), not per piece or per CWT &mdash; set LB pricing correctly in Invex</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Ship Via: Best Way &mdash; Terms: NET 30 &mdash; ship to: <strong>131 Harvester CT HWY 24, Anderson, SC 29626</strong> (South Carolina &mdash; Anderson facility) &mdash; note PO originates from Ottawa, IL but ships to SC</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Enter sales order &mdash; part# MMP101E0170 &mdash; description: 10MM HR PLATE 1E0170, 64&Prime;&times;189&Prime; &mdash; 48,000 LB &mdash; $0.55940/LB &mdash; due 08/05/25 &mdash; log SO# in tracker</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Create purchase requisition for 10MM HR plate &mdash; 64&Prime;&times;189&Prime; (nearly 16 ft &mdash; confirm equipment can handle 189&Prime; length) &mdash; grade 1E0170 &mdash; 48,000 LB total weight</div><span class="step-dept">Purchasing</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Approve requisition</div><span class="step-dept">Purchasing</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Convert requisition to PO &mdash; issue to mill</div><span class="step-dept">Purchasing</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Create pre-receipt at FOB warehouse</div><span class="step-dept">Purchasing</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Create receipt at FOB warehouse when material arrives</div><span class="step-dept">Purchasing</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Create transfer to destination warehouse if applicable</div><span class="step-dept">Purchasing</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Receive 48,000 LB &mdash; verify 10MM thickness, 64&Prime;&times;189&Prime; dimensions, and grade 1E0170 &mdash; confirm actual received weight at receipt</div><span class="step-dept">Receiving</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Assign material to order &amp; create job set</div><span class="step-dept">Production Planning</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Schedule &amp; run production &mdash; due 08/05/25</div><span class="step-dept">Job Scheduling</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Process plate to 64&Prime;&times;189&Prime; &mdash; verify 10MM thickness &mdash; tag pieces with customer part# MMP101E0170 and PO# 75276 &mdash; confirm actual piece count and weight before staging</div><span class="step-dept">Production Recording</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Move finished material to staging</div><span class="step-dept">Inventory</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Create transport order &mdash; ship via Best Way to SMF, 131 Harvester CT HWY 24, Anderson, SC 29626</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Stage &amp; load &mdash; confirm total weight on truck against 48,000 LB expected &mdash; ship due 08/05/25</div><span class="step-dept">Shipping</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Invoice at $0.55940/LB on actual shipped weight &mdash; Terms: NET 30 &mdash; reference PO# 75276 and part# MMP101E0170 on invoice &mdash; log invoice# in tracker</div><span class="step-dept">Sales</span></div>
+            </div>
+            <div>
+              <div class="po-ref-wrap">
+                <div class="po-ref-lbl">Customer PO &mdash; SMF #75276</div>
+                <div class="po-doc">
+                  <div class="po-doc-hdr">
+                    <div class="po-doc-co">SMF<br><span style="font-size:9px;color:var(--muted);font-weight:400">1 S. Hicks Ave, Ottawa, IL 61350</span></div>
+                    <div class="po-doc-po">
+                      <div class="po-doc-po-label">Purchase Order</div>
+                      <div class="po-doc-po-num">75276</div>
+                      <div class="po-doc-po-date">07/29/25 &nbsp;&bull;&nbsp; Buyer: Michael Massey &nbsp;&bull;&nbsp; Ph: 309-432-2586</div>
+                    </div>
+                  </div>
+                  <div class="po-doc-parties">
+                    <div>
+                      <div class="po-doc-party-lbl">Vendor</div>
+                      <div class="po-doc-party-val">Steel Warehouse</div>
+                    </div>
+                    <div>
+                      <div class="po-doc-party-lbl">Ship To</div>
+                      <div class="po-doc-party-val">South Carolina &mdash; Anderson<br>131 Harvester CT HWY 24<br>Anderson, SC 29626</div>
+                    </div>
+                    <div>
+                      <div class="po-doc-party-lbl">Terms / Due</div>
+                      <div class="po-doc-party-val">Due: <strong>08/05/25</strong><br>Terms: NET 30<br>Ship Via: Best Way</div>
+                    </div>
+                  </div>
+                  <table class="po-doc-table">
+                    <thead><tr><th>Line</th><th>Part Number</th><th>Description</th><th>Qty</th><th>Unit</th><th class="td-num">Unit Price</th><th class="td-num">Extended</th></tr></thead>
+                    <tbody>
+                      <tr>
+                        <td>L1</td>
+                        <td class="td-tag">MMP101E0170</td>
+                        <td class="td-desc">
+                          <strong>10MM HR PLATE 1E0170</strong><br>
+                          64&Prime; &times; 189&Prime;<br>
+                          <em style="font-size:9.5px;color:#666">Mixed spec: 10MM thickness &bull; 64&Prime;&times;189&Prime; (nearly 16 ft) width/length</em>
+                        </td>
+                        <td>48,000</td>
+                        <td>LB</td>
+                        <td class="td-num">$0.55940</td>
+                        <td class="td-num">$26,851.20</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div class="po-doc-footer">
+                    <div class="po-doc-footer-item">Total: 48,000 LB &nbsp;&bull;&nbsp; Ship to Anderson, SC</div>
+                    <div class="po-doc-footer-total">Order Total: $26,851.20</div>
+                  </div>
+                </div>
+              </div>
+              <textarea class="up-notes-area" style="margin-top:.75rem" placeholder="Notes — SO#, how you entered 10MM metric thickness with inch dimensions, LB pricing setup, part# cross-reference, observations..."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Exercise 8: SMF PO 76411 ── -->
+      <div class="sc-card">
+        <div class="sc-header" onclick="toggleCard('d3sup8')">
+          <div class="diff-badge diff-a">Exercise 8</div>
+          <div class="sc-title">Contract Sale entry &mdash; SMF PO #76411</div>
+          <div class="sc-cust">SMF &mdash; 1 line &mdash; 48,000 LB &mdash; 10MM HR plate &mdash; repeat order, price adjustment ($0.57240 vs prior $0.55940) &mdash; ship to Anderson, SC &mdash; due 10/24/25</div>
+          <div class="sc-status" id="st-d3sup8" onclick="cycleStatus(event,'d3sup8')">Not started</div>
+          <div class="sc-toggle" id="tog-d3sup8">&#9660;</div>
+        </div>
+        <div class="sc-body" id="body-d3sup8">
+          <div class="sc-grid">
+            <div class="step-list-wrap">
+              <div class="sc-sec-lbl">Exercise checklist</div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Review PO &mdash; <strong>repeat order from SMF</strong> for same product as PO #75276 (Exercise 7) &mdash; same 48,000 LB of 10MM HR PLATE 1E0170, 64&Prime;&times;189&Prime;, part# MMP101E0170 &mdash; note the <strong>price increased</strong> from $0.55940/LB to $0.57240/LB ($1,300 more on same volume)</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Confirm updated price: <strong>$0.57240/LB</strong> on 48,000 LB = $27,475.20 &mdash; do not carry forward the price from PO #75276 &mdash; verify this price is in the customer agreement before entering order</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Ship Via: Best Way &mdash; Terms: NET 30 &mdash; same ship-to as prior order: 131 Harvester CT HWY 24, Anderson, SC 29626</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Enter sales order &mdash; part# MMP101E0170 &mdash; 10MM HR PLATE 1E0170, 64&Prime;&times;189&Prime; &mdash; 48,000 LB &mdash; <strong>$0.57240/LB</strong> &mdash; due 10/24/25 &mdash; log SO# in tracker</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Create purchase requisition &mdash; same spec as prior PO: 10MM HR plate, 64&Prime;&times;189&Prime;, grade 1E0170, 48,000 LB &mdash; confirm current mill pricing supports updated sell price at $0.57240/LB</div><span class="step-dept">Purchasing</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Approve requisition</div><span class="step-dept">Purchasing</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Convert requisition to PO &mdash; issue to mill</div><span class="step-dept">Purchasing</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Create pre-receipt at FOB warehouse</div><span class="step-dept">Purchasing</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Create receipt at FOB warehouse when material arrives</div><span class="step-dept">Purchasing</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Create transfer to destination warehouse if applicable</div><span class="step-dept">Purchasing</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Receive 48,000 LB &mdash; verify 10MM thickness, 64&Prime;&times;189&Prime; dimensions, and grade 1E0170 &mdash; confirm actual received weight at receipt</div><span class="step-dept">Receiving</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Assign material to order &amp; create job set</div><span class="step-dept">Production Planning</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Schedule &amp; run production &mdash; due 10/24/25</div><span class="step-dept">Job Scheduling</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Process plate to 64&Prime;&times;189&Prime; &mdash; verify 10MM thickness &mdash; tag pieces with part# MMP101E0170 and PO# 76411</div><span class="step-dept">Production Recording</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Move finished material to staging</div><span class="step-dept">Inventory</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Create transport order &mdash; ship via Best Way to SMF, 131 Harvester CT HWY 24, Anderson, SC 29626</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Stage &amp; load &mdash; confirm total weight on truck &mdash; ship due 10/24/25</div><span class="step-dept">Shipping</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Invoice at <strong>$0.57240/LB</strong> on actual shipped weight &mdash; Terms: NET 30 &mdash; reference PO# 76411 and part# MMP101E0170 on invoice &mdash; log invoice# in tracker</div><span class="step-dept">Sales</span></div>
+            </div>
+            <div>
+              <div class="po-ref-wrap">
+                <div class="po-ref-lbl">Customer PO &mdash; SMF #76411</div>
+                <div class="po-doc">
+                  <div class="po-doc-hdr">
+                    <div class="po-doc-co">SMF<br><span style="font-size:9px;color:var(--muted);font-weight:400">1 S. Hicks Ave, Ottawa, IL 61350</span></div>
+                    <div class="po-doc-po">
+                      <div class="po-doc-po-label">Purchase Order</div>
+                      <div class="po-doc-po-num">76411</div>
+                      <div class="po-doc-po-date">10/17/25 &nbsp;&bull;&nbsp; Buyer: Michael Massey</div>
+                    </div>
+                  </div>
+                  <div class="po-doc-parties">
+                    <div>
+                      <div class="po-doc-party-lbl">Vendor</div>
+                      <div class="po-doc-party-val">Steel Warehouse</div>
+                    </div>
+                    <div>
+                      <div class="po-doc-party-lbl">Ship To</div>
+                      <div class="po-doc-party-val">South Carolina &mdash; Anderson<br>131 Harvester CT HWY 24<br>Anderson, SC 29626</div>
+                    </div>
+                    <div>
+                      <div class="po-doc-party-lbl">Terms / Due</div>
+                      <div class="po-doc-party-val">Due: <strong>10/24/25</strong><br>Terms: NET 30<br>Ship Via: Best Way</div>
+                    </div>
+                  </div>
+                  <div class="po-doc-instr"><strong>Repeat order &mdash; same spec as PO #75276</strong> &nbsp;&bull;&nbsp; Price adjusted to $0.57240/LB (prev. $0.55940/LB) &nbsp;&bull;&nbsp; Reference part# MMP101E0170 on all documents</div>
+                  <table class="po-doc-table">
+                    <thead><tr><th>Line</th><th>Part Number</th><th>Description</th><th>Qty</th><th>Unit</th><th class="td-num">Unit Price</th><th class="td-num">Extended</th></tr></thead>
+                    <tbody>
+                      <tr>
+                        <td>L1</td>
+                        <td class="td-tag">MMP101E0170</td>
+                        <td class="td-desc">
+                          <strong>10MM HR PLATE 1E0170</strong><br>
+                          64&Prime; &times; 189&Prime;<br>
+                          <em style="font-size:9.5px;color:#666">Price adjusted from prior order &mdash; confirm $0.57240 (not $0.55940)</em>
+                        </td>
+                        <td>48,000</td>
+                        <td>LB</td>
+                        <td class="td-num">$0.57240</td>
+                        <td class="td-num">$27,475.20</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div class="po-doc-footer">
+                    <div class="po-doc-footer-item">Total: 48,000 LB &nbsp;&bull;&nbsp; Same spec as PO #75276 &nbsp;&bull;&nbsp; Ship to Anderson, SC</div>
+                    <div class="po-doc-footer-total">Order Total: $27,475.20</div>
+                  </div>
+                </div>
+              </div>
+              <textarea class="up-notes-area" style="margin-top:.75rem" placeholder="Notes — SO#, confirmed updated price ($0.57240 vs prior $0.55940/LB), margin check on price change, observations..."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Exercise 9: Interstate Sheet Metal Co Inc PO 0022951-00 ── -->
+      <div class="sc-card">
+        <div class="sc-header" onclick="toggleCard('d3sup9')">
+          <div class="diff-badge diff-a">Exercise 9</div>
+          <div class="sc-title">Contract Sale entry &mdash; Interstate Sheet Metal Co Inc PO #0022951-00</div>
+          <div class="sc-cust">Interstate Sheet Metal &mdash; 4 lines &mdash; TP100 abrasion-resistant plate &mdash; priced per EA/PC &mdash; mixed UOM &mdash; MTR required all items &mdash; FOB Delivered &mdash; due 03/11/26</div>
+          <div class="sc-status" id="st-d3sup9" onclick="cycleStatus(event,'d3sup9')">Not started</div>
+          <div class="sc-toggle" id="tog-d3sup9">&#9660;</div>
+        </div>
+        <div class="sc-body" id="body-d3sup9">
+          <div class="sc-grid">
+            <div class="step-list-wrap">
+              <div class="sc-sec-lbl">Exercise checklist</div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Review PO &mdash; 4-line order for <strong>TP100 abrasion-resistant specialty plate</strong> &mdash; TP100 is a high-strength, wear-resistant alloy (similar to AR100/T-1) &mdash; requires grade-specific sourcing; do not substitute standard A36 or A572 &mdash; PO date 3/4/26, due 3/11/26 (7-day lead time)</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Note <strong>mixed unit of measure</strong>: Lines 001 and 004 use <strong>PC</strong> (pieces); Lines 002 and 003 use <strong>EA</strong> (each) &mdash; functionally the same per-piece pricing method &mdash; ensure the correct UOM is selected in Invex for each line</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Note Line 001 cut size: <strong>60&Prime;&times;100&Prime;</strong> &mdash; non-standard (most other lines are 60&Prime;&times;120&Prime;) &mdash; enter 100&Prime; length exactly as ordered &mdash; do not default to 120&Prime;</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Note Line 004 part# notation: <strong>3/8-TP100 5 X 10</strong> = 5&prime;&times;10&prime; = 60&Prime;&times;120&Prime; &mdash; dimensions expressed in feet on the PO; enter as inches in Invex</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Ship Via: <strong>DELIVERED</strong> (FOB Destination) &mdash; freight cost is your responsibility to the customer dock at 1515 ITC Way, Anniston, AL 36207 &mdash; factor freight into margin review</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Terms: <strong>.5%10 N30</strong> &mdash; customer earns 0.5% discount if paid within 10 days &mdash; note this on the sales order so invoicing is set up correctly</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Note: <strong>MTR required on ALL line items</strong> &mdash; all raw material must be accompanied by MTR or equivalent &mdash; flag this requirement at order entry so it carries through to shipping</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Enter Line 001: 1/4-TP100 60X100 &mdash; 22 PC &mdash; $331.83/PC &mdash; $7,300.26 &mdash; GL: 1380 &mdash; <em style="color:var(--muted)">60&Prime;&times;100&Prime; non-standard length</em></div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Enter Line 002: 1/2-TP100 60X120 &mdash; 15 EA &mdash; $796.38/EA &mdash; $11,945.70 &mdash; GL: 1380</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Enter Line 003: 5/16-100K-60X120 &mdash; 14 EA &mdash; $497.74/EA &mdash; $6,968.36 &mdash; GL: 1380 &mdash; <em style="color:var(--muted)">TP100 specialty plate, 60&Prime;&times;120&Prime;</em></div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Enter Line 004: 3/8-TP100 5X10 (60&Prime;&times;120&Prime;) &mdash; 12 PC &mdash; $597.25/PC &mdash; $7,167.00 &mdash; GL: 1380 &mdash; <em style="color:var(--muted)">enter dimensions as 60&Prime;&times;120&Prime; in Invex</em></div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Vendor Code: STE987 &mdash; Buyer: Sherdena Bryant &mdash; Verify order total: $33,381.32 &mdash; log SO# in tracker</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Create purchase requisitions for TP100 specialty plate &mdash; all four lines require TP100/AR100 grade &mdash; confirm sourcing availability for 7-day lead time &mdash; note L001 at 60&Prime;&times;100&Prime; may require custom cut</div><span class="step-dept">Purchasing</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Approve requisitions</div><span class="step-dept">Purchasing</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Convert requisitions to POs &mdash; issue to mill or specialty plate supplier</div><span class="step-dept">Purchasing</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Create pre-receipt, receipt, and transfer as needed</div><span class="step-dept">Purchasing</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Receive all 63 total pieces &mdash; verify TP100 grade and cut size for each line &mdash; confirm 60&Prime;&times;100&Prime; for L001 and 60&Prime;&times;120&Prime; for L002&ndash;L004 &mdash; collect MTRs at receipt</div><span class="step-dept">Receiving</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Assign material to order &amp; create job sets</div><span class="step-dept">Production Planning</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Schedule &amp; run production &mdash; due 03/11/26</div><span class="step-dept">Job Scheduling</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Process TP100 plate &mdash; verify cut sizes: L001 at 60&Prime;&times;100&Prime;, L002&ndash;L004 at 60&Prime;&times;120&Prime; &mdash; tag all pieces &mdash; stage MTRs by line item</div><span class="step-dept">Production Recording</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Move finished material to staging &mdash; group by line item</div><span class="step-dept">Inventory</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Create transport order &mdash; DELIVERED terms &mdash; arrange freight to Interstate Sheet Metal Co Inc, 1515 ITC Way, Anniston, AL 36207 &mdash; freight is prepaid (your cost)</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Stage &amp; load all 63 pieces &mdash; count per line &mdash; include MTRs for all 4 lines with shipment &mdash; PO# 0022951-00 must appear on all documents</div><span class="step-dept">Shipping</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Invoice shipment &mdash; Terms: .5%10 N30 &mdash; PO# 0022951-00 on invoice &mdash; log invoice# in tracker</div><span class="step-dept">Sales</span></div>
+            </div>
+            <div>
+              <div class="po-ref-wrap">
+                <div class="po-ref-lbl">Customer PO &mdash; Interstate Sheet Metal Co Inc #0022951-00</div>
+                <div class="po-doc">
+                  <div class="po-doc-hdr">
+                    <div class="po-doc-co">Interstate Sheet Metal Co Inc</div>
+                    <div class="po-doc-po">
+                      <div class="po-doc-po-label">Purchase Order</div>
+                      <div class="po-doc-po-num">0022951-00</div>
+                      <div class="po-doc-po-date">03/04/26 &nbsp;&bull;&nbsp; Buyer: Sherdena Bryant &nbsp;&bull;&nbsp; Vendor Code: STE987</div>
+                    </div>
+                  </div>
+                  <div class="po-doc-parties">
+                    <div>
+                      <div class="po-doc-party-lbl">Vendor</div>
+                      <div class="po-doc-party-val">Steel Warehouse<br>4005 Solutions Center<br>Chicago, IL 60677-4000<br><em style="font-size:9px">Vendor Code: STE987</em></div>
+                    </div>
+                    <div>
+                      <div class="po-doc-party-lbl">Ship To</div>
+                      <div class="po-doc-party-val">Interstate Sheet Metal Co Inc<br>1515 ITC Way<br>Anniston, AL 36207<br>Ph: 256-831-0590</div>
+                    </div>
+                    <div>
+                      <div class="po-doc-party-lbl">Terms / Due</div>
+                      <div class="po-doc-party-val">Due: <strong>03/11/26</strong><br>Ship Via: Delivered<br>Terms: .5%10 N30<br>F.O.B.: Destination</div>
+                    </div>
+                  </div>
+                  <div class="po-doc-instr"><strong>All raw material items must be accompanied by its corresponding MTR or equivalent</strong>, unless otherwise specified &nbsp;&bull;&nbsp; PO# 0022951-00 must appear on all invoices, packing lists, bills of lading, and correspondence</div>
+                  <table class="po-doc-table">
+                    <thead><tr><th>Item</th><th>Part Number / Rev</th><th>Description</th><th>Qty</th><th>UM</th><th class="td-num">Unit Price</th><th class="td-num">Extension</th></tr></thead>
+                    <tbody>
+                      <tr>
+                        <td>001</td>
+                        <td class="td-tag">1/4-TP100<br>60 X100</td>
+                        <td class="td-desc">1/4&Prime; TP100 Plate, 60&Prime;&times;100&Prime;<br><em style="font-size:9.5px;color:#666">GL: 1380 &nbsp;&bull;&nbsp; Non-standard 100&Prime; length &nbsp;&bull;&nbsp; Ship: 03/11/26</em></td>
+                        <td>22</td>
+                        <td>PC</td>
+                        <td class="td-num">$331.83</td>
+                        <td class="td-num">$7,300.26</td>
+                      </tr>
+                      <tr>
+                        <td>002</td>
+                        <td class="td-tag">1/2-TP100<br>60 X120</td>
+                        <td class="td-desc">1/2&Prime; TP100 Plate, 60&Prime;&times;120&Prime;<br><em style="font-size:9.5px;color:#666">GL: 1380 &nbsp;&bull;&nbsp; Ship: 03/11/26</em></td>
+                        <td>15</td>
+                        <td>EA</td>
+                        <td class="td-num">$796.38</td>
+                        <td class="td-num">$11,945.70</td>
+                      </tr>
+                      <tr>
+                        <td>003</td>
+                        <td class="td-tag">5/16-100K<br>-60X120</td>
+                        <td class="td-desc">5/16&Prime; TP100 Plate, 60&Prime;&times;120&Prime;<br><em style="font-size:9.5px;color:#666">GL: 1380 &nbsp;&bull;&nbsp; Ship: 03/11/26</em></td>
+                        <td>14</td>
+                        <td>EA</td>
+                        <td class="td-num">$497.74</td>
+                        <td class="td-num">$6,968.36</td>
+                      </tr>
+                      <tr>
+                        <td>004</td>
+                        <td class="td-tag">3/8-TP100<br>5 X 10</td>
+                        <td class="td-desc">3/8&Prime; TP100 Plate, 60&Prime;&times;120&Prime;<br><em style="font-size:9.5px;color:#666">GL: 1380 &nbsp;&bull;&nbsp; PO shows 5&prime;&times;10&prime; &mdash; enter as 60&Prime;&times;120&Prime; &nbsp;&bull;&nbsp; Ship: 03/11/26</em></td>
+                        <td>12</td>
+                        <td>PC</td>
+                        <td class="td-num">$597.25</td>
+                        <td class="td-num">$7,167.00</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div class="po-doc-footer">
+                    <div class="po-doc-footer-item">Total Pcs: 63 &nbsp;&bull;&nbsp; MTR required all items &nbsp;&bull;&nbsp; FOB Delivered</div>
+                    <div class="po-doc-footer-total">Order Total: $33,381.32</div>
+                  </div>
+                </div>
+              </div>
+              <textarea class="up-notes-area" style="margin-top:.75rem" placeholder="Notes — SO#, TP100 sourcing, how you handled mixed PC/EA units, 60×100 non-standard size, feet-to-inch conversion on L004, MTR handling, observations..."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Exercise 10: Interstate Sheet Metal Co Inc PO 0022963-00 ── -->
+      <div class="sc-card">
+        <div class="sc-header" onclick="toggleCard('d3sup10')">
+          <div class="diff-badge diff-a">Exercise 10</div>
+          <div class="sc-title">Contract Sale entry &mdash; Interstate Sheet Metal Co Inc PO #0022963-00</div>
+          <div class="sc-cust">Interstate Sheet Metal &mdash; 3 lines &mdash; TP100 plate &amp; GR50 HRPO sheet &mdash; mixed product types &mdash; 84-sheet high-volume line &mdash; MTR required all items &mdash; due 03/12/26</div>
+          <div class="sc-status" id="st-d3sup10" onclick="cycleStatus(event,'d3sup10')">Not started</div>
+          <div class="sc-toggle" id="tog-d3sup10">&#9660;</div>
+        </div>
+        <div class="sc-body" id="body-d3sup10">
+          <div class="sc-grid">
+            <div class="step-list-wrap">
+              <div class="sc-sec-lbl">Exercise checklist</div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Review PO &mdash; repeat order from Interstate Sheet Metal (same customer as PO #0022951-00, Exercise 9), PO date 3/5/26, due 3/12/26 &mdash; this order <strong>mixes product types</strong>: Lines 001 and 002 are <strong>TP100 specialty plate</strong>; Line 003 is standard <strong>5/16&Prime; GR50 HRPO sheet</strong> &mdash; different sourcing paths required</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Note Line 003: <strong>84 sheets of 5/16&Prime; GR50 HRPO 60&Prime;&times;120&Prime;</strong> at $322.26/SH = $27,069.84 &mdash; largest line by value and volume on this PO &mdash; standard HRPO product (not TP100) &mdash; significantly lower price per piece than the TP100 lines</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Note Line 002: same <strong>1/2-TP100 60&Prime;&times;120&Prime;</strong> part# and price ($796.38) as PO #0022951-00 Line 002 from the prior day &mdash; verify pricing consistency against the customer contract before entry</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Note mixed UOM: Lines 001 and 003 use <strong>SH</strong> (sheets); Line 002 uses <strong>EA</strong> (each) &mdash; enter the correct UOM per line in Invex</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Terms: <strong>.5%10 N30</strong> &mdash; same as prior PO &mdash; note early payment discount on invoice &mdash; MTR required on ALL three lines including the standard GR50 HRPO</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Enter Line 001: 3/8-100K-60X120 &mdash; 12 SH &mdash; $597.25/SH &mdash; $7,167.00 &mdash; GL: 1380 &mdash; <em style="color:var(--muted)">TP100 specialty plate</em></div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Enter Line 002: 1/2-TP100 60X120 &mdash; 25 EA &mdash; $796.38/EA &mdash; $19,909.50 &mdash; GL: 1380 &mdash; <em style="color:var(--muted)">TP100 specialty plate &mdash; verify price matches prior PO</em></div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Enter Line 003: 5/16-HRPO-60X120 &mdash; 84 SH &mdash; $322.26/SH &mdash; $27,069.84 &mdash; GL: 1380 &mdash; <em style="color:var(--muted)">standard GR50 HRPO sheet &mdash; not TP100 &mdash; different sourcing</em></div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Vendor Code: STE987 &mdash; Buyer: Sherdena Bryant &mdash; Verify order total: $54,146.34 &mdash; log SO# in tracker</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Create purchase requisitions &mdash; <strong>separate</strong> TP100 specialty requisition (L001, L002) from standard HRPO GR50 requisition (L003) &mdash; different mills/suppliers &mdash; confirm availability of 84 sheets GR50 HRPO for short lead time</div><span class="step-dept">Purchasing</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Approve requisitions</div><span class="step-dept">Purchasing</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Convert requisitions to POs &mdash; issue to appropriate suppliers</div><span class="step-dept">Purchasing</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Create pre-receipt, receipt, and transfer as needed</div><span class="step-dept">Purchasing</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Receive all 121 total pieces &mdash; verify TP100 grade for L001/L002 and GR50 HRPO for L003 &mdash; all 60&Prime;&times;120&Prime; &mdash; collect MTRs for all three lines at receipt</div><span class="step-dept">Receiving</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Assign material to order &amp; create job sets &mdash; note 84-sheet L003 volume in planning</div><span class="step-dept">Production Planning</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Schedule &amp; run production &mdash; due 03/12/26</div><span class="step-dept">Job Scheduling</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Process all 121 pieces to 60&Prime;&times;120&Prime; &mdash; keep TP100 (L001/L002) and GR50 HRPO (L003) material separated &mdash; tag each line &mdash; prepare MTRs for all three lines</div><span class="step-dept">Production Recording</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Move finished material to staging &mdash; group by line item</div><span class="step-dept">Inventory</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Create transport order &mdash; ship to Interstate Sheet Metal Co Inc, 1515 ITC Way, Anniston, AL 36207 &mdash; due 03/12/26</div><span class="step-dept">Sales</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Stage &amp; load all 121 pieces &mdash; count per line &mdash; MTRs for all 3 lines must accompany shipment &mdash; PO# 0022963-00 on all documents</div><span class="step-dept">Shipping</span></div>
+              <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Invoice shipment &mdash; Terms: .5%10 N30 &mdash; PO# 0022963-00 on invoice &mdash; log invoice# in tracker</div><span class="step-dept">Sales</span></div>
+            </div>
+            <div>
+              <div class="po-ref-wrap">
+                <div class="po-ref-lbl">Customer PO &mdash; Interstate Sheet Metal Co Inc #0022963-00</div>
+                <div class="po-doc">
+                  <div class="po-doc-hdr">
+                    <div class="po-doc-co">Interstate Sheet Metal Co Inc</div>
+                    <div class="po-doc-po">
+                      <div class="po-doc-po-label">Purchase Order</div>
+                      <div class="po-doc-po-num">0022963-00</div>
+                      <div class="po-doc-po-date">03/05/26 &nbsp;&bull;&nbsp; Buyer: Sherdena Bryant &nbsp;&bull;&nbsp; Vendor Code: STE987</div>
+                    </div>
+                  </div>
+                  <div class="po-doc-parties">
+                    <div>
+                      <div class="po-doc-party-lbl">Vendor</div>
+                      <div class="po-doc-party-val">Steel Warehouse<br>4005 Solutions Center<br>Chicago, IL 60677-4000<br><em style="font-size:9px">Vendor Code: STE987</em></div>
+                    </div>
+                    <div>
+                      <div class="po-doc-party-lbl">Ship To</div>
+                      <div class="po-doc-party-val">Interstate Sheet Metal Co Inc<br>1515 ITC Way<br>Anniston, AL 36207<br>Ph: 256-831-0590</div>
+                    </div>
+                    <div>
+                      <div class="po-doc-party-lbl">Terms / Due</div>
+                      <div class="po-doc-party-val">Due: <strong>03/12/26</strong><br>Terms: .5%10 N30</div>
+                    </div>
+                  </div>
+                  <div class="po-doc-instr"><strong>All raw material items must be accompanied by its corresponding MTR or equivalent</strong>, unless otherwise specified &nbsp;&bull;&nbsp; PO# 0022963-00 must appear on all invoices, packing lists, bills of lading, and correspondence</div>
+                  <table class="po-doc-table">
+                    <thead><tr><th>Item</th><th>Part Number / Rev</th><th>Description</th><th>Qty</th><th>UM</th><th class="td-num">Unit Price</th><th class="td-num">Extension</th></tr></thead>
+                    <tbody>
+                      <tr>
+                        <td>001</td>
+                        <td class="td-tag">3/8-100K<br>-60X120</td>
+                        <td class="td-desc">3/8&Prime; TP100 Plate, 60&Prime;&times;120&Prime;<br><em style="font-size:9.5px;color:#666">GL: 1380 &nbsp;&bull;&nbsp; TP100 specialty &nbsp;&bull;&nbsp; Ship: 03/12/26</em></td>
+                        <td>12</td>
+                        <td>SH</td>
+                        <td class="td-num">$597.25</td>
+                        <td class="td-num">$7,167.00</td>
+                      </tr>
+                      <tr>
+                        <td>002</td>
+                        <td class="td-tag">1/2-TP100<br>60 X120</td>
+                        <td class="td-desc">1/2&Prime; TP100 Plate, 60&Prime;&times;120&Prime;<br><em style="font-size:9.5px;color:#666">GL: 1380 &nbsp;&bull;&nbsp; Same price as PO #0022951 L002 &nbsp;&bull;&nbsp; Ship: 03/12/26</em></td>
+                        <td>25</td>
+                        <td>EA</td>
+                        <td class="td-num">$796.38</td>
+                        <td class="td-num">$19,909.50</td>
+                      </tr>
+                      <tr>
+                        <td>003</td>
+                        <td class="td-tag">5/16-HRPO<br>-60X120</td>
+                        <td class="td-desc">5/16&Prime; GR50 HRPO Sheet, 60&Prime;&times;120&Prime;<br><em style="font-size:9.5px;color:#666">GL: 1380 &nbsp;&bull;&nbsp; Standard HRPO &mdash; not TP100 &nbsp;&bull;&nbsp; Ship: 03/12/26</em></td>
+                        <td>84</td>
+                        <td>SH</td>
+                        <td class="td-num">$322.26</td>
+                        <td class="td-num">$27,069.84</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div class="po-doc-footer">
+                    <div class="po-doc-footer-item">Total Pcs: 121 &nbsp;&bull;&nbsp; MTR required all items &nbsp;&bull;&nbsp; L001/L002 = TP100 &nbsp;&bull;&nbsp; L003 = GR50 HRPO</div>
+                    <div class="po-doc-footer-total">Order Total: $54,146.34</div>
+                  </div>
+                </div>
+              </div>
+              <textarea class="up-notes-area" style="margin-top:.75rem" placeholder="Notes — SO#, how you handled TP100 vs. GR50 HRPO sourcing on same PO, mixed SH/EA UOM, MTR handling for all lines, observations..."></textarea>
             </div>
           </div>
         </div>

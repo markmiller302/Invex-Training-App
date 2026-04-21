@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Invex Process Tracking</title>
+<script src="https://alcdn.msauth.net/browser/2.38.2/js/msal-browser.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0f11;--surface:#18181c;--border:#2a2a32;--accent:#7c6af7;
+  --accent2:#4fd1b0;--text:#e8e6f0;--muted:#7a7890;--input:#22222a;
+  --timing:#f7a76c;--done:#4fd1b0;--font:'Sora',sans-serif;--mono:'DM Mono',monospace;
+}
+html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:var(--font)}
+.app{display:flex;flex-direction:column;min-height:100vh}
+.header{padding:1.25rem 2rem .75rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.header-left h1{font-size:20px;font-weight:600;letter-spacing:-.02em}
+.header-left p{font-size:11px;color:var(--muted);margin-top:3px;font-family:var(--mono)}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#4fd1b0;animation:blink 2s infinite}
+.live-dot.offline{background:#e24b4a;animation:none}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.live-label{font-size:11px;font-family:var(--mono);color:var(--muted)}
+.user-badge{font-size:11px;font-family:var(--mono);background:var(--surface);border:1px solid var(--border);border-radius:5px;padding:4px 10px;color:var(--text)}
+.modal-overlay{position:fixed;inset:0;background:#000000cc;z-index:100;display:flex;align-items:center;justify-content:center}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:2rem;max-width:420px;width:90%}
+.modal h2{font-size:16px;font-weight:600;margin-bottom:.5rem}
+.modal p{font-size:13px;color:var(--muted);margin-bottom:1.5rem;line-height:1.6}
+.modal label{font-size:11px;font-family:var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:6px}
+.modal input,.modal select{width:100%;background:var(--input);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--mono);font-size:13px;padding:8px 12px;outline:none;margin-bottom:1rem;transition:border .15s}
+.modal input:focus,.modal select:focus{border-color:var(--accent)}
+.modal select option{background:var(--surface)}
+.tabs{display:flex;border-bottom:1px solid var(--border);padding:0 2rem;overflow-x:auto}
+.tab{padding:9px 16px;font-size:12px;font-weight:500;cursor:pointer;border:none;border-bottom:2px solid transparent;color:var(--muted);white-space:nowrap;transition:all .18s;background:none;font-family:var(--font)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab:hover:not(.active){color:var(--text)}
+.stat-bar{display:flex;gap:10px;padding:1rem 2rem .5rem;flex-wrap:wrap}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 16px;min-width:130px}
+.stat-label{font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px}
+.stat-val{font-size:19px;font-weight:600;font-family:var(--mono)}
+.stat-val.g{color:var(--accent2)}
+.stat-sub{font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:2px}
+.progress-bar{height:2px;background:var(--border);border-radius:2px;margin-top:6px}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;transition:width .4s}
+
+/* active timers banner */
+.active-banner{display:none;align-items:center;gap:8px;padding:.5rem 2rem;background:#f7a76c08;border-bottom:1px solid #f7a76c22;flex-wrap:wrap}
+.active-banner.visible{display:flex}
+.active-banner-label{font-size:10px;font-family:var(--mono);color:var(--timing);text-transform:uppercase;letter-spacing:.07em;flex-shrink:0}
+.active-chip{display:inline-flex;align-items:center;gap:6px;background:#f7a76c12;border:1px solid #f7a76c33;border-radius:4px;padding:3px 9px;font-size:10px;font-family:var(--mono);color:var(--timing)}
+.chip-name{color:#e8e6f0cc}
+.chip-time{font-weight:500;min-width:40px}
+.chip-stop{cursor:pointer;color:#f7a76c66;font-size:12px;line-height:1;padding-left:2px}
+.chip-stop:hover{color:var(--timing)}
+
+.main{flex:1;padding:1rem 2rem 1.5rem}
+.desc{font-size:11px;color:var(--muted);font-family:var(--mono);background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:9px 13px;margin-bottom:1rem;line-height:1.7}
+.hint{font-size:11px;color:var(--muted);margin-bottom:.75rem;font-family:var(--mono);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.hk{color:var(--accent);background:#7c6af718;border-radius:3px;padding:2px 6px;font-size:10px;white-space:nowrap}
+.hk.orange{color:var(--timing);background:#f7a76c18}
+.hk.red{color:#e24b4a;background:#e24b4a18}
+.table-wrap{overflow-x:auto}
+table{border-collapse:collapse;min-width:100%}
+thead th{padding:0 6px 8px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;font-size:11px;font-family:var(--mono)}
+thead th.row-label{min-width:100px;color:var(--muted);font-weight:400;position:sticky;left:0;background:var(--bg);z-index:2}
+.step-col{min-width:185px;padding-bottom:8px}
+.dep-label{font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:3px}
+.step-name-lbl{font-size:11px;font-weight:500;color:var(--text)}
+tbody td.row-label{font-size:11px;color:var(--muted);font-family:var(--mono);padding-right:10px;white-space:nowrap;vertical-align:top;padding-top:8px;position:sticky;left:0;background:var(--bg);z-index:1}
+.cell{padding:3px 5px 3px 0;vertical-align:top}
+.cell-inner{display:flex;flex-direction:column;gap:4px;min-width:178px}
+
+/* confirmation input */
+.txn-input{width:100%;background:var(--input);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:var(--mono);font-size:12px;padding:5px 8px;outline:none;transition:border .15s}
+.txn-input:focus{border-color:var(--accent);background:#1a1a24}
+.txn-input.has-val{border-color:#253a30}
+.txn-input:disabled{opacity:.4;cursor:not-allowed}
+
+/* timer controls */
+.timer-row{display:flex;align-items:center;gap:4px}
+.btn-start{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:4px;font-size:10px;font-family:var(--mono);font-weight:500;cursor:pointer;background:#f7a76c15;color:var(--timing);border:1px solid #f7a76c44;transition:all .15s;white-space:nowrap}
+.btn-start:hover{background:#f7a76c25;border-color:var(--timing)}
+.btn-stop{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:4px;font-size:10px;font-family:var(--mono);font-weight:500;cursor:pointer;background:#e24b4a15;color:#e24b4a;border:1px solid #e24b4a44;transition:all .15s;white-space:nowrap}
+.btn-stop:hover{background:#e24b4a25;border-color:#e24b4a}
+.btn-reset{display:inline-flex;align-items:center;padding:3px 6px;border-radius:4px;font-size:10px;font-family:var(--mono);cursor:pointer;background:none;color:var(--muted);border:1px solid var(--border);transition:all .15s;white-space:nowrap}
+.btn-reset:hover{color:var(--text);border-color:var(--muted)}
+
+/* live clock */
+.live-clock{font-size:10px;font-family:var(--mono);color:var(--timing);background:#f7a76c10;border:1px solid #f7a76c33;border-radius:4px;padding:3px 7px;min-width:50px;text-align:center;animation:pulse-border 1.2s infinite}
+@keyframes pulse-border{0%,100%{border-color:#f7a76c33}50%{border-color:#f7a76c88}}
+
+/* elapsed done */
+.elapsed-done{font-size:10px;font-family:var(--mono);color:var(--done);background:#4fd1b010;border:1px solid #4fd1b022;border-radius:4px;padding:3px 7px;white-space:nowrap}
+
+/* who */
+.who-lbl{font-size:9px;font-family:var(--mono);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.feed-panel{background:var(--surface);border-top:1px solid var(--border);padding:.75rem 2rem;max-height:130px;overflow-y:auto}
+.feed-title{font-size:10px;font-family:var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.5rem}
+.feed-item{font-size:11px;font-family:var(--mono);color:var(--muted);padding:2px 0;border-bottom:1px solid #2a2a3233}
+.feed-item .who{color:var(--accent2)}
+.feed-item .ts{float:right;font-size:10px}
+.bottom-bar{display:flex;gap:8px;padding:.75rem 2rem;border-top:1px solid var(--border);align-items:center;flex-wrap:wrap}
+.btn{padding:6px 14px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;font-family:var(--font);transition:all .15s}
+.btn-p{background:var(--accent);color:#fff;border:none}.btn-p:hover{opacity:.82}
+.btn-g{background:none;color:var(--muted);border:1px solid var(--border)}.btn-g:hover{color:var(--text);border-color:var(--text)}
+.btn-d{background:none;color:#e24b4a;border:1px solid #e24b4a33}.btn-d:hover{background:#e24b4a15}
+#save-msg{font-size:11px;color:var(--muted);font-family:var(--mono);margin-left:auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <h2>Welcome to Invex Process Tracker</h2>
+      <p>Enter your name and department so teammates can see who's logging each step.</p>
+      <label>Your name</label>
+      <input type="text" id="modal-name" placeholder="e.g. Sarah Johnson" autocomplete="off"/>
+      <label>Department</label>
+      <select id="modal-dept">
+        <option value="">Select your department...</option>
+        <option value="Sales">Sales</option>
+        <option value="Purchasing">Purchasing</option>
+        <option value="Receiving">Receiving</option>
+        <option value="Production Planning">Production Planning</option>
+        <option value="Production">Production</option>
+        <option value="Admin">Admin / All access</option>
+      </select>
+      <button class="btn btn-p" style="width:100%;padding:10px" onclick="setupUser()">Enter Tracker</button>
+    </div>
+  </div>
+
+  <div class="header">
+    <div class="header-left">
+      <h1>Invex Process Tracking</h1>
+      <p id="hdr-sub">Loading...</p>
+    </div>
+    <div class="header-right">
+      <div style="display:flex;align-items:center;gap:6px">
+        <div class="live-dot" id="conn-dot"></div>
+        <span class="live-label" id="conn-label">Connecting...</span>
+      </div>
+      <div class="user-badge" id="user-badge">—</div>
+      <button class="btn btn-g" style="font-size:11px;padding:4px 10px" onclick="switchUser()">Switch user</button>
+    </div>
+  </div>
+
+  <div class="tabs" id="tabs"></div>
+  <div class="stat-bar" id="stat-bar"></div>
+  <div class="active-banner" id="active-banner">
+    <span class="active-banner-label">● Timers running</span>
+    <div id="active-chips" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+  </div>
+  <div class="main" id="main">
+    <div style="display:flex;align-items:center;justify-content:center;min-height:180px;flex-direction:column;gap:12px">
+      <div style="width:26px;height:26px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite"></div>
+      <p style="font-size:12px;font-family:var(--mono);color:var(--muted)">Connecting...</p>
+    </div>
+  </div>
+  <div class="feed-panel">
+    <div class="feed-title">Live activity</div>
+    <div id="feed-list"><span style="font-size:11px;font-family:var(--mono);color:var(--muted)">No activity yet.</span></div>
+  </div>
+  <div class="bottom-bar">
+    <button class="btn btn-g" onclick="exportCSV()">Export CSV</button>
+    <button class="btn btn-d" id="clear-btn" onclick="clearScenario()" style="display:none">Clear scenario (admin)</button>
+    <span id="save-msg"></span>
+  </div>
+</div>
+
+<script>
+// ── MICROSOFT CONFIG ────────────────────────────────────────────────
+const MSAL_CONFIG = {
+  auth: {
+    clientId: "d738994e-5af2-4f9a-8f29-676d2748fc48",
+    authority: "https://login.microsoftonline.com/5aac54b2-d64c-4e72-a541-5e91d90a0919",
+    redirectUri: "https://lermanenterprise.sharepoint.com/sites/InvexImplementation/Document%20Storage/Invex%20Training%20App/process_tracker.html"
+  },
+  cache: { cacheLocation: "sessionStorage", storeAuthStateInCookie: false }
+};
+const GRAPH_SCOPES = ["Sites.ReadWrite.All", "User.Read"];
+const SP_HOST = "lermanenterprise.sharepoint.com";
+const SP_SITE_PATH = "/sites/InvexImplementation";
+
+const SCENARIOS = [
+  {id:'s1',name:'Spot Sale',label:'Scenario 1 — Spot Sale',
+   desc:'Create a spot quote for 5 items — 3 from the same product (different lengths), 2 different products. Disposition the other 2 as not awarded. Convert the 3 products from the same master coil to a sales order.',
+   steps:[
+    {dept:'Sales',name:'Sales Quote #'},{dept:'Sales',name:'Create CPS'},
+    {dept:'Purchasing',name:'Create PPS'},{dept:'Sales',name:'Approve CPS'},
+    {dept:'Sales',name:'Sales Order #'},{dept:'Purchasing',name:'Requisition #'},
+    {dept:'Purchasing',name:'Purchase Order #'},{dept:'Purchasing',name:'Pre-Receipt # (FOB)'},
+    {dept:'Purchasing',name:'Receipt # (FOB)'},{dept:'Purchasing',name:'Transport #'},
+    {dept:'Receiving',name:'Receipt # (Destination)'},{dept:'Receiving',name:'Coil Tag #'},
+    {dept:'Production Planning',name:'Job Set #'},{dept:'Production',name:'Tag # (Final)'},
+    {dept:'Sales',name:'Transport #'},{dept:'Sales',name:'Invoice #'},
+  ]},
+  {id:'s2',name:'Contract Sale',label:'Scenario 2 — Contract Sale',
+   desc:'Create a Blanket order for 3 different lengths from the same product. Source Order = 135k#, Release Order = 45k# (mix of 3 lengths).',
+   steps:[
+    {dept:'Sales',name:'Create CPS'},{dept:'Purchasing',name:'Create PPS'},
+    {dept:'Sales',name:'Approve CPS'},{dept:'Sales',name:'Enter Customer Forecast'},
+    {dept:'Purchasing',name:'Requisition #'},{dept:'Purchasing',name:'Purchase Order #'},
+    {dept:'Purchasing',name:'Pre-Receipt # (FOB)'},{dept:'Purchasing',name:'Receipt # (FOB)'},
+    {dept:'Purchasing',name:'Transport #'},{dept:'Receiving',name:'Receipt # (Destination)'},
+    {dept:'Receiving',name:'Tag #'},{dept:'Sales',name:'Source Order #'},
+    {dept:'Production Planning',name:'Job Set # (Source)'},{dept:'Production',name:'Tag # (Source)'},
+    {dept:'Sales',name:'Release #'},{dept:'Production Planning',name:'Job Set # (Release)'},
+    {dept:'Production',name:'Tag # (Final)'},{dept:'Sales',name:'Transport #'},
+    {dept:'Sales',name:'Invoice #'},
+  ]},
+  {id:'s3',name:'Toll — Valmont',label:'Scenario 3 — Toll — Valmont',
+   desc:'Create a toll process order for 1 Valmont coil that includes a drop pc.',
+   steps:[
+    {dept:'Sales',name:'Pre-Receipt #'},{dept:'Receiving',name:'Receipt #'},
+    {dept:'Receiving',name:'Tag #'},{dept:'Sales',name:'Toll Sales Order #'},
+    {dept:'Production Planning',name:'Job Set #'},{dept:'Production',name:'Tag # (Final)'},
+    {dept:'Sales',name:'Transport #'},{dept:'Sales',name:'Invoice #'},
+  ]},
+  {id:'s4',name:'Toll — Generic',label:'Scenario 4 — Toll — Generic',
+   desc:'Create a generic toll process order for 1 coil that includes a drop pc.',
+   steps:[
+    {dept:'Sales',name:'Pre-Receipt #'},{dept:'Receiving',name:'Receipt #'},
+    {dept:'Receiving',name:'Tag #'},{dept:'Sales',name:'Toll Sales Order #'},
+    {dept:'Production Planning',name:'Job Set #'},{dept:'Production',name:'Tag # (Final)'},
+    {dept:'Sales',name:'Transport #'},{dept:'Sales',name:'Invoice #'},
+  ]},
+];
+
+const DEPT_COLORS={'Sales':'#7c6af7','Purchasing':'#4fd1b0','Receiving':'#f7a76c','Production Planning':'#e879b0','Production':'#60c0f5'};
+
+let cur=0, liveData={}, user=null;
+let clockIntervals={}, bannerInterval=null, feedItems=[];
+let msalApp=null, siteId=null, stepsListId=null, activityListId=null;
+let itemIdMap={}, pollTimer=null;
+
+// ── MSAL / TOKEN ────────────────────────────────────────────────────
+async function getToken(){
+  const accounts=msalApp.getAllAccounts();
+  if(!accounts.length){
+    const res=await msalApp.loginPopup({scopes:GRAPH_SCOPES});
+    return res.accessToken;
+  }
+  try{
+    const res=await msalApp.acquireTokenSilent({scopes:GRAPH_SCOPES,account:accounts[0]});
+    return res.accessToken;
+  }catch(e){
+    const res=await msalApp.acquireTokenPopup({scopes:GRAPH_SCOPES,account:accounts[0]});
+    return res.accessToken;
+  }
+}
+
+// ── GRAPH API HELPERS ───────────────────────────────────────────────
+async function gGet(path){
+  const t=await getToken();
+  const r=await fetch('https://graph.microsoft.com/v1.0'+path,{headers:{Authorization:'Bearer '+t}});
+  if(!r.ok) throw new Error('Graph GET '+r.status+' '+path);
+  return r.json();
+}
+async function gPost(path,body){
+  const t=await getToken();
+  const r=await fetch('https://graph.microsoft.com/v1.0'+path,{
+    method:'POST',headers:{Authorization:'Bearer '+t,'Content-Type':'application/json'},
+    body:JSON.stringify(body)
+  });
+  if(!r.ok) throw new Error('Graph POST '+r.status);
+  return r.json();
+}
+async function gPatch(path,body){
+  const t=await getToken();
+  const r=await fetch('https://graph.microsoft.com/v1.0'+path,{
+    method:'PATCH',headers:{Authorization:'Bearer '+t,'Content-Type':'application/json'},
+    body:JSON.stringify(body)
+  });
+  if(!r.ok) throw new Error('Graph PATCH '+r.status);
+  return r.json();
+}
+async function gDelete(path){
+  const t=await getToken();
+  await fetch('https://graph.microsoft.com/v1.0'+path,{method:'DELETE',headers:{Authorization:'Bearer '+t}});
+}
+
+// ── INIT GRAPH ──────────────────────────────────────────────────────
+function setConn(state){
+  const dot=document.getElementById('conn-dot'),lbl=document.getElementById('conn-label');
+  if(state==='live'){dot.className='live-dot';lbl.textContent='Live';}
+  else if(state==='offline'){dot.className='live-dot offline';lbl.textContent='Offline';}
+  else{dot.className='live-dot offline';lbl.textContent='Connecting...';}
+}
+
+async function initGraph(){
+  setConn('connecting');
+  try{
+    const site=await gGet('/sites/'+SP_HOST+':'+SP_SITE_PATH);
+    siteId=site.id;
+    const [sl,al]=await Promise.all([
+      gGet('/sites/'+siteId+'/lists/InvexTrackerSteps'),
+      gGet('/sites/'+siteId+'/lists/InvexTrackerActivity')
+    ]);
+    stepsListId=sl.id; activityListId=al.id;
+    setConn('live');
+    renderTabs();
+    startPolling(cur);
+  }catch(e){
+    console.error('Graph init failed:',e);
+    setConn('offline');
+    SCENARIOS.forEach(s=>{liveData[s.id]={};});
+    renderTabs();renderStatBar();renderMain();
+  }
+}
+
+// ── POLLING ─────────────────────────────────────────────────────────
+function startPolling(idx){
+  if(pollTimer) clearInterval(pollTimer);
+  loadData(idx);
+  pollTimer=setInterval(()=>loadData(idx),6000);
+}
+
+async function loadData(idx){
+  if(!siteId) return;
+  const s=SCENARIOS[idx],sid=s.id;
+  try{
+    // Load all step items (filter client-side to avoid index requirement)
+    const res=await gGet('/sites/'+siteId+'/lists/'+stepsListId+'/items?$expand=fields&$top=500');
+    liveData[sid]={};
+    if(!itemIdMap[sid]) itemIdMap[sid]={};
+    (res.value||[]).forEach(item=>{
+      const f=item.fields;
+      if(f.ScenarioId!==sid) return;
+      const i=parseInt(f.StepIndex);
+      if(isNaN(i)) return;
+      const startTs=f.StartTime||null,endTs=f.EndTime||null;
+      liveData[sid][i]={
+        txn:f.TxnValue||null, who:f.EnteredBy||null, dept:f.EnteredByDept||null,
+        startTs, endTs,
+        elapsed:f.ElapsedSeconds?f.ElapsedSeconds*1000:null,
+        startIso:startTs?new Date(startTs).toISOString():null,
+        endIso:endTs?new Date(endTs).toISOString():null
+      };
+      itemIdMap[sid][i]=item.id;
+    });
+    // Load activity feed
+    const ar=await gGet('/sites/'+siteId+'/lists/'+activityListId+'/items?$expand=fields&$top=100&$orderby=id desc');
+    feedItems=(ar.value||[]).map(item=>({
+      who:item.fields.Who||'',dept:item.fields.UserDept||'',
+      scenario:item.fields.ScenarioName||'',step:item.fields.StepName||'',
+      action:item.fields.Action||'',ts:item.fields.ActionTs||0
+    })).sort((a,b)=>b.ts-a.ts);
+    setConn('live');
+    renderStatBar();renderMain();updateBanner();renderFeed();
+  }catch(e){
+    console.warn('Poll error:',e);
+    setConn('offline');
+  }
+}
+
+// ── USER MANAGEMENT ─────────────────────────────────────────────────
+function loadUser(){
+  try{user=JSON.parse(localStorage.getItem('invex_u3'));}catch{}
+  if(user&&user.name&&user.dept){
+    document.getElementById('modal').style.display='none';
+    document.getElementById('user-badge').textContent=user.name+' · '+user.dept;
+    if(user.dept==='Admin') document.getElementById('clear-btn').style.display='';
+    msalApp=new msal.PublicClientApplication(MSAL_CONFIG);
+    msalApp.initialize().then(()=>initGraph());
+  }
+}
+function setupUser(){
+  const name=document.getElementById('modal-name').value.trim();
+  const dept=document.getElementById('modal-dept').value;
+  if(!name||!dept){alert('Please enter your name and department.');return;}
+  user={name,dept};
+  localStorage.setItem('invex_u3',JSON.stringify(user));
+  document.getElementById('modal').style.display='none';
+  document.getElementById('user-badge').textContent=name+' · '+dept;
+  if(dept==='Admin') document.getElementById('clear-btn').style.display='';
+  msalApp=new msal.PublicClientApplication(MSAL_CONFIG);
+  msalApp.initialize().then(()=>initGraph());
+}
+function switchUser(){localStorage.removeItem('invex_u3');location.reload();}
+
+// ── TIMER ACTIONS ───────────────────────────────────────────────────
+function startTimer(sid,idx){
+  const step=(liveData[sid]||{})[idx]||{};
+  if(step.startTs) return;
+  writeStep(sid,idx,{startTs:Date.now(),startIso:new Date().toISOString(),who:user.name,dept:user.dept});
+  logActivity(sid,idx,'started timer');
+}
+function stopTimer(sid,idx){
+  const step=(liveData[sid]||{})[idx]||{};
+  if(!step.startTs||step.endTs) return;
+  const endTs=Date.now(),elapsed=endTs-step.startTs;
+  writeStep(sid,idx,{endTs,endIso:new Date().toISOString(),elapsed});
+  logActivity(sid,idx,'stopped timer ('+fmtElapsed(elapsed)+')');
+}
+function commitTxn(sid,idx,val){
+  if(!val.trim()) return;
+  const step=(liveData[sid]||{})[idx]||{};
+  const updates={txn:val.trim(),who:user.name};
+  if(step.startTs&&!step.endTs){
+    const endTs=Date.now();
+    updates.endTs=endTs;updates.endIso=new Date().toISOString();updates.elapsed=endTs-step.startTs;
+  }
+  writeStep(sid,idx,updates);
+  logActivity(sid,idx,'entered: '+val.trim());
+}
+function resetStep(sid,idx){
+  if(!confirm('Reset this step? Clears timer and confirmation number.')) return;
+  writeStep(sid,idx,{txn:null,startTs:null,endTs:null,elapsed:null,startIso:null,endIso:null,who:null,dept:null});
+}
+
+// ── WRITE STEP ──────────────────────────────────────────────────────
+async function writeStep(sid,idx,updates){
+  if(!liveData[sid]) liveData[sid]={};
+  if(!liveData[sid][idx]) liveData[sid][idx]={};
+  const isReset=Object.values(updates).every(v=>v===null);
+  if(isReset){
+    liveData[sid][idx]={};
+    renderStatBar();renderMain();updateBanner();
+    const existId=itemIdMap[sid]&&itemIdMap[sid][idx];
+    if(existId){
+      try{await gDelete('/sites/'+siteId+'/lists/'+stepsListId+'/items/'+existId);delete itemIdMap[sid][idx];}
+      catch(e){console.warn('Delete failed:',e);}
+    }
+    return;
+  }
+  Object.assign(liveData[sid][idx],updates);
+  renderStatBar();renderMain();updateBanner();
+  if(!siteId) return;
+  const fields={ScenarioId:sid,StepIndex:idx};
+  if(updates.txn!==undefined) fields.TxnValue=updates.txn||'';
+  if(updates.who!==undefined) fields.EnteredBy=updates.who||'';
+  if(updates.dept!==undefined) fields.EnteredByDept=updates.dept||'';
+  if(updates.startTs!==undefined) fields.StartTime=updates.startTs||0;
+  if(updates.endTs!==undefined) fields.EndTime=updates.endTs||0;
+  if(updates.elapsed!==undefined) fields.ElapsedSeconds=updates.elapsed?Math.round(updates.elapsed/1000):0;
+  try{
+    const existId=itemIdMap[sid]&&itemIdMap[sid][idx];
+    if(existId){
+      await gPatch('/sites/'+siteId+'/lists/'+stepsListId+'/items/'+existId+'/fields',fields);
+    }else{
+      const res=await gPost('/sites/'+siteId+'/lists/'+stepsListId+'/items',{fields});
+      if(!itemIdMap[sid]) itemIdMap[sid]={};
+      itemIdMap[sid][idx]=res.id;
+    }
+  }catch(e){console.warn('Write step failed:',e);}
+}
+
+// ── LOG ACTIVITY ────────────────────────────────────────────────────
+async function logActivity(sid,idx,action){
+  if(!siteId) return;
+  const s=SCENARIOS.find(x=>x.id===sid);
+  try{
+    await gPost('/sites/'+siteId+'/lists/'+activityListId+'/items',{fields:{
+      Who:user.name,UserDept:user.dept,ScenarioName:s.name,
+      StepName:s.steps[idx].name,Action:action,ActionTs:Date.now()
+    }});
+  }catch(e){console.warn('Log activity failed:',e);}
+}
+
+// ── Formatting ─────────────────────────────────────────────────────────────────
+function fmtElapsed(ms){
+  if(!ms||ms<0) return null;
+  const s=Math.floor(ms/1000),m=Math.floor(s/60),h=Math.floor(m/60);
+  if(h>0) return h+'h '+(m%60)+'m '+(s%60)+'s';
+  if(m>0) return m+'m '+(s%60)+'s';
+  return s+'s';
+}
+function fmtLive(startTs){
+  const ms=Date.now()-startTs;
+  const s=Math.floor(ms/1000)%60,m=Math.floor(ms/60000)%60,h=Math.floor(ms/3600000);
+  const p=n=>String(n).padStart(2,'0');
+  return h>0?p(h)+':'+p(m)+':'+p(s):p(m)+':'+p(s);
+}
+function fmtTs(ts){return ts?new Date(ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'}):''}
+
+function getStats(sid){
+  const s=SCENARIOS.find(x=>x.id===sid),d=liveData[sid]||{};
+  const done=s.steps.filter((_,i)=>d[i]&&d[i].txn).length;
+  const allMs=s.steps.map((_,i)=>d[i]&&d[i].elapsed).filter(Boolean);
+  const total=allMs.length?allMs.reduce((a,b)=>a+b,0):null;
+  const starts=s.steps.map((_,i)=>d[i]&&d[i].startTs).filter(Boolean);
+  const ends=s.steps.map((_,i)=>d[i]&&d[i].endTs).filter(Boolean);
+  const wall=starts.length&&ends.length?Math.max(...ends)-Math.min(...starts):null;
+  const running=s.steps.filter((_,i)=>d[i]&&d[i].startTs&&!d[i].endTs).length;
+  return{done,total:s.steps.length,elapsed:total,wall,pct:Math.round(done/s.steps.length*100),running};
+}
+
+// ── Active banner ──────────────────────────────────────────────────────────────
+function updateBanner(){
+  const s=SCENARIOS[cur],d=liveData[s.id]||{};
+  const running=s.steps.map((st,i)=>({st,i,data:d[i]})).filter(x=>x.data&&x.data.startTs&&!x.data.endTs);
+  const banner=document.getElementById('active-banner');
+  const chips=document.getElementById('active-chips');
+  if(!running.length){banner.classList.remove('visible');clearInterval(bannerInterval);bannerInterval=null;return;}
+  banner.classList.add('visible');
+  const draw=()=>{
+    chips.innerHTML=running.map(({st,i,data})=>
+      `<div class="active-chip">
+        <span class="chip-name">${st.dept} · ${st.name}</span>
+        <span class="chip-time">${fmtLive(data.startTs)}</span>
+        <span class="chip-stop" onclick="stopTimer('${s.id}',${i})" title="Stop timer">■</span>
+      </div>`
+    ).join('');
+  };
+  draw();
+  if(!bannerInterval) bannerInterval=setInterval(draw,300);
+}
+
+// ── Render ─────────────────────────────────────────────────────────────────────
+function renderTabs(){
+  document.getElementById('tabs').innerHTML=SCENARIOS.map((s,i)=>
+    `<button class="tab${i===cur?' active':''}" onclick="switchTab(${i})">${s.name}</button>`
+  ).join('');
+}
+function switchTab(i){
+  cur=i;
+  clearInterval(bannerInterval);bannerInterval=null;
+  Object.values(clockIntervals).forEach(clearInterval);clockIntervals={};
+  if(siteId) startPolling(i);
+  else{renderTabs();renderStatBar();renderMain();}
+}
+
+function renderStatBar(){
+  const s=SCENARIOS[cur],st=getStats(s.id);
+  document.getElementById('stat-bar').innerHTML=`
+    <div class="stat">
+      <div class="stat-label">Completed</div>
+      <div class="stat-val">${st.done}<span style="font-size:13px;color:var(--muted)"> / ${st.total}</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${st.pct}%"></div></div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Progress</div>
+      <div class="stat-val g">${st.pct}%</div>
+    </div>
+    <div class="stat" style="${st.running?'border-color:#f7a76c55':''}">
+      <div class="stat-label" style="${st.running?'color:var(--timing)':''}">Active timers</div>
+      <div class="stat-val" style="${st.running?'color:var(--timing)':''}font-size:22px">${st.running}</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Total step time</div>
+      <div class="stat-val g" style="font-size:14px">${fmtElapsed(st.elapsed)||'—'}</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Wall clock</div>
+      <div class="stat-val" style="font-size:14px">${fmtElapsed(st.wall)||'—'}</div>
+      <div class="stat-sub">first start → last stop</div>
+    </div>`;
+  document.getElementById('hdr-sub').textContent=SCENARIOS[cur].label+' · '+SCENARIOS[cur].steps.length+' steps';
+}
+
+function renderMain(){
+  const s=SCENARIOS[cur],d=liveData[s.id]||{},sid=s.id;
+  Object.values(clockIntervals).forEach(clearInterval);clockIntervals={};
+
+  let html=`<div class="desc">${s.desc}</div>
+  <div class="hint">
+    <span class="hk orange">▶ Start Time</span> starts the clock independently for each step —
+    <span class="hk red">■ Stop Time</span> locks it in. Multiple steps can run at the same time.
+  </div>
+  <div class="table-wrap"><table><thead><tr><th class="row-label"></th>`;
+
+  s.steps.forEach(step=>{
+    const c=DEPT_COLORS[step.dept]||'#888';
+    html+=`<th class="step-col" style="border-top:2px solid ${c}44;padding-top:6px">
+      <div class="dep-label" style="color:${c}">${step.dept}</div>
+      <div class="step-name-lbl">${step.name}</div>
+    </th>`;
+  });
+  html+='</tr></thead><tbody><tr><td class="row-label">Step</td>';
+
+  s.steps.forEach((step,i)=>{
+    const sd=d[i]||{};
+    const isDone=!!sd.endTs, isRunning=!!(sd.startTs&&!sd.endTs);
+    const isMyDept=user&&(user.dept==='Admin'||user.dept===step.dept);
+    const val=sd.txn||'';
+
+    html+=`<td class="cell"><div class="cell-inner">
+      <input class="txn-input${val?' has-val':''}" type="text"
+        value="${val.replace(/"/g,'&quot;')}"
+        placeholder="Confirmation #"
+        ${(!isMyDept||isDone)?'disabled':''}
+        onchange="commitTxn('${sid}',${i},this.value)"
+        onkeydown="if(event.key==='Enter'){commitTxn('${sid}',${i},this.value);this.blur()}"
+      />
+      <div class="timer-row">`;
+
+    if(!isRunning&&!isDone&&isMyDept){
+      html+=`<button class="btn-start" onclick="startTimer('${sid}',${i})">▶ Start Time</button>`;
+    }
+    if(isRunning&&isMyDept){
+      html+=`<button class="btn-stop" onclick="stopTimer('${sid}',${i})">■ Stop Time</button>
+      <div class="live-clock" id="clk_${sid}_${i}">${fmtLive(sd.startTs)}</div>`;
+    }
+    if(isDone){
+      html+=`<div class="elapsed-done">✓ ${fmtElapsed(sd.elapsed)||'<1s'}</div>`;
+      if(isMyDept) html+=`<button class="btn-reset" onclick="resetStep('${sid}',${i})" title="Reset step">↺</button>`;
+    }
+
+    html+='</div>';
+    if(sd.who) html+=`<div class="who-lbl">${sd.who}${sd.startTs?' · '+fmtTs(sd.startTs):''}</div>`;
+    html+='</div></td>';
+  });
+
+  html+='</tr></tbody></table></div>';
+  document.getElementById('main').innerHTML=html;
+
+  // Start live clocks
+  s.steps.forEach((_,i)=>{
+    const sd=d[i]||{};
+    if(sd.startTs&&!sd.endTs){
+      const key=`${sid}_${i}`;
+      clockIntervals[key]=setInterval(()=>{
+        const el=document.getElementById(`clk_${sid}_${i}`);
+        if(el) el.textContent=fmtLive(sd.startTs);
+      },200);
+    }
+  });
+}
+
+function renderFeed(){
+  const list=document.getElementById('feed-list');
+  if(!feedItems.length){list.innerHTML='<span style="font-size:11px;font-family:var(--mono);color:var(--muted)">No activity yet.</span>';return;}
+  list.innerHTML=feedItems.slice(0,20).map(item=>
+    `<div class="feed-item">
+      <span class="who">${item.who}</span>
+      <span style="color:var(--muted)"> (${item.dept}) — ${item.action} · <span style="color:var(--text)">${item.step}</span> [${item.scenario}]</span>
+      <span class="ts">${fmtTs(item.ts)}</span>
+    </div>`
+  ).join('');
+}
+
+async function clearScenario(){
+  if(!confirm('Clear ALL data for this scenario? This cannot be undone.')) return;
+  const s=SCENARIOS[cur],sid=s.id;
+  liveData[sid]={};renderStatBar();renderMain();updateBanner();
+  if(!siteId) return;
+  try{
+    const res=await gGet('/sites/'+siteId+'/lists/'+stepsListId+'/items?$expand=fields&$top=500');
+    const toDelete=(res.value||[]).filter(item=>item.fields.ScenarioId===sid);
+    await Promise.all(toDelete.map(item=>gDelete('/sites/'+siteId+'/lists/'+stepsListId+'/items/'+item.id)));
+    if(itemIdMap[sid]) itemIdMap[sid]={};
+  }catch(e){console.warn('Clear failed:',e);}
+}
+
+function exportCSV(){
+  const s=SCENARIOS[cur],d=liveData[s.id]||{};
+  const hdrs=['Step','Department','Confirmation #','Who','Start Time','End Time','Elapsed'];
+  const rows=s.steps.map((st,i)=>{
+    const sd=d[i]||{};
+    return[st.name,st.dept,sd.txn||'',sd.who||'',
+      sd.startIso?new Date(sd.startIso).toLocaleString():'',
+      sd.endIso?new Date(sd.endIso).toLocaleString():'',
+      fmtElapsed(sd.elapsed)||''];
+  });
+  const csv=[hdrs,...rows].map(r=>r.map(v=>'"'+String(v||'').replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download=s.id+'_tracking.csv';a.click();
+}
+
+loadUser();
+</script>
+</body>
+</html>
