@@ -212,7 +212,8 @@ const SCENARIOS = [
 ];
 const DEPT_COLORS={'Sales':'#7c6af7','Purchasing':'#4fd1b0','Receiving':'#f7a76c','Production Planning':'#e879b0','Production':'#60c0f5'};
 
-// liveData[sid][idx] = { txn, who, dept, startTs, endTs, elapsed, startIso, endIso }
+const NUM_VISIBLE=20,NUM_COLLAPSED=50,TOTAL_ROWS=70;
+
 let cur=0, liveData={}, user=null;
 let clockIntervals={}, bannerInterval=null, feedItems=[];
 let pollTimer=null, saveTimer=null, connected=false;
@@ -277,10 +278,9 @@ async function loadData(){
 
 // ── USER MANAGEMENT ──
 function loadUser(){
-  try{ user = JSON.parse(localStorage.getItem('invex_u3')); }catch(_){}
-  if(user && user.name && user.dept){
+  if(user&&user.name&&user.dept){
     document.getElementById('modal').style.display='none';
-    document.getElementById('user-badge').textContent = user.name+' · '+user.dept;
+    document.getElementById('user-badge').textContent=user.name+' · '+user.dept;
     if(user.dept==='Admin') document.getElementById('clear-btn').style.display='';
     renderTabs(); setConn('connecting'); startPolling();
   }
@@ -288,15 +288,14 @@ function loadUser(){
 function setupUser(){
   const name=document.getElementById('modal-name').value.trim();
   const dept=document.getElementById('modal-dept').value;
-  if(!name||!dept){ alert('Please enter your name and department.'); return; }
+  if(!name||!dept){alert('Please enter your name and department.');return;}
   user={name,dept};
-  localStorage.setItem('invex_u3', JSON.stringify(user));
   document.getElementById('modal').style.display='none';
-  document.getElementById('user-badge').textContent = name+' · '+dept;
+  document.getElementById('user-badge').textContent=name+' · '+dept;
   if(dept==='Admin') document.getElementById('clear-btn').style.display='';
   renderTabs(); setConn('connecting'); startPolling();
 }
-function switchUser(){ localStorage.removeItem('invex_u3'); location.reload(); }
+function switchUser(){location.reload();}
 
 // ── TIMER ACTIONS ──
 function startTimer(sid,idx){
@@ -359,46 +358,64 @@ function logActivity(sid,idx,action){
 // ── FORMATTING ──
 function fmtElapsed(ms){
   if(!ms||ms<0) return null;
-  const s=Math.floor(ms/1000), m=Math.floor(s/60), h=Math.floor(m/60);
+  const s=Math.floor(ms/1000),m=Math.floor(s/60),h=Math.floor(m/60);
   if(h>0) return h+'h '+(m%60)+'m '+(s%60)+'s';
   if(m>0) return m+'m '+(s%60)+'s';
   return s+'s';
 }
 function fmtLive(startTs){
   const ms=Date.now()-startTs;
-  const s=Math.floor(ms/1000)%60, m=Math.floor(ms/60000)%60, h=Math.floor(ms/3600000);
+  const s=Math.floor(ms/1000)%60,m=Math.floor(ms/60000)%60,h=Math.floor(ms/3600000);
   const p=n=>String(n).padStart(2,'0');
   return h>0?p(h)+':'+p(m)+':'+p(s):p(m)+':'+p(s);
 }
-function fmtTs(ts){ return ts?new Date(ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'}):''; }
+function fmtTs(ts){return ts?new Date(ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'}):''}
 
 function getStats(sid){
-  const s=SCENARIOS.find(x=>x.id===sid), d=liveData[sid]||{};
-  const done=s.steps.filter((_,i)=>d[i]&&d[i].txn).length;
-  const allMs=s.steps.map((_,i)=>d[i]&&d[i].elapsed).filter(Boolean);
-  const total=allMs.length?allMs.reduce((a,b)=>a+b,0):null;
-  const starts=s.steps.map((_,i)=>d[i]&&d[i].startTs).filter(Boolean);
-  const ends=s.steps.map((_,i)=>d[i]&&d[i].endTs).filter(Boolean);
+  const s=SCENARIOS.find(x=>x.id===sid),d=liveData[sid]||{};
+  const stepsLen=s.steps.length;
+  let done=0,completedRows=0,running=0;
+  const allMs=[],starts=[],ends=[];
+  for(let r=0;r<TOTAL_ROWS;r++){
+    let rowDone=0;
+    for(let i=0;i<stepsLen;i++){
+      const sd=d[r*stepsLen+i]||{};
+      if(sd.txn){done++;rowDone++;}
+      if(sd.elapsed) allMs.push(sd.elapsed);
+      if(sd.startTs) starts.push(sd.startTs);
+      if(sd.endTs) ends.push(sd.endTs);
+      if(sd.startTs&&!sd.endTs) running++;
+    }
+    if(rowDone===stepsLen) completedRows++;
+  }
+  const elapsed=allMs.length?allMs.reduce((a,b)=>a+b,0):null;
   const wall=starts.length&&ends.length?Math.max(...ends)-Math.min(...starts):null;
-  const running=s.steps.filter((_,i)=>d[i]&&d[i].startTs&&!d[i].endTs).length;
-  return{done,total:s.steps.length,elapsed:total,wall,pct:Math.round(done/s.steps.length*100),running};
+  return{done,stepsLen,completedRows,totalRows:TOTAL_ROWS,elapsed,wall,running};
 }
 
 // ── ACTIVE BANNER ──
 function updateBanner(){
-  const s=SCENARIOS[cur], d=liveData[s.id]||{};
-  const running=s.steps.map((st,i)=>({st,i,data:d[i]})).filter(x=>x.data&&x.data.startTs&&!x.data.endTs);
+  const s=SCENARIOS[cur],d=liveData[s.id]||{},sid=s.id;
+  const stepsLen=s.steps.length;
+  const running=[];
+  for(let r=0;r<TOTAL_ROWS;r++){
+    for(let i=0;i<stepsLen;i++){
+      const gi=r*stepsLen+i;
+      const data=d[gi]||{};
+      if(data.startTs&&!data.endTs) running.push({st:s.steps[i],gi,r,data});
+    }
+  }
   const banner=document.getElementById('active-banner');
   const chips=document.getElementById('active-chips');
-  if(!running.length){ banner.classList.remove('visible'); clearInterval(bannerInterval); bannerInterval=null; return; }
+  if(!running.length){banner.classList.remove('visible');clearInterval(bannerInterval);bannerInterval=null;return;}
   banner.classList.add('visible');
   const draw=()=>{
-    chips.innerHTML=running.map(({st,i,data})=>
-      '<div class="active-chip">'+
-        '<span class="chip-name">'+st.dept+' · '+st.name+'</span>'+
-        '<span class="chip-time">'+fmtLive(data.startTs)+'</span>'+
-        '<span class="chip-stop" onclick="stopTimer(\''+s.id+'\','+i+')" title="Stop timer">■</span>'+
-      '</div>'
+    chips.innerHTML=running.map(({st,gi,r,data})=>
+      `<div class="active-chip">
+        <span class="chip-name">Ord ${r+1} · ${st.dept} · ${st.name}</span>
+        <span class="chip-time">${fmtLive(data.startTs)}</span>
+        <span class="chip-stop" onclick="stopTimer('${sid}',${gi})" title="Stop timer">■</span>
+      </div>`
     ).join('');
   };
   draw();
@@ -408,7 +425,7 @@ function updateBanner(){
 // ── RENDER ──
 function renderTabs(){
   document.getElementById('tabs').innerHTML=SCENARIOS.map((s,i)=>
-    '<button class="tab'+(i===cur?' active':'')+'" onclick="switchTab('+i+')">'+s.name+'</button>'
+    `<button class="tab${i===cur?' active':''}" onclick="switchTab(${i})">${s.name}</button>`
   ).join('');
 }
 function switchTab(i){
@@ -419,88 +436,148 @@ function switchTab(i){
 }
 
 function renderStatBar(){
-  const s=SCENARIOS[cur], st=getStats(s.id);
-  document.getElementById('stat-bar').innerHTML=
-    '<div class="stat">'+
-      '<div class="stat-label">Completed</div>'+
-      '<div class="stat-val">'+st.done+'<span style="font-size:13px;color:var(--muted)"> / '+st.total+'</span></div>'+
-      '<div class="progress-bar"><div class="progress-fill" style="width:'+st.pct+'%"></div></div>'+
-    '</div>'+
-    '<div class="stat">'+
-      '<div class="stat-label">Progress</div>'+
-      '<div class="stat-val g">'+st.pct+'%</div>'+
-    '</div>'+
-    '<div class="stat" style="'+(st.running?'border-color:#f7a76c55':'')+'">'+
-      '<div class="stat-label" style="'+(st.running?'color:var(--timing)':'')+'">Active timers</div>'+
-      '<div class="stat-val" style="'+(st.running?'color:var(--timing)':'')+'font-size:22px">'+st.running+'</div>'+
-    '</div>'+
-    '<div class="stat">'+
-      '<div class="stat-label">Total step time</div>'+
-      '<div class="stat-val g" style="font-size:14px">'+(fmtElapsed(st.elapsed)||'—')+'</div>'+
-    '</div>'+
-    '<div class="stat">'+
-      '<div class="stat-label">Wall clock</div>'+
-      '<div class="stat-val" style="font-size:14px">'+(fmtElapsed(st.wall)||'—')+'</div>'+
-      '<div class="stat-sub">first start → last stop</div>'+
-    '</div>';
-  document.getElementById('hdr-sub').textContent = SCENARIOS[cur].label+' · '+SCENARIOS[cur].steps.length+' steps';
+  const s=SCENARIOS[cur],st=getStats(s.id);
+  const pct=Math.min(100,Math.round(st.completedRows/NUM_VISIBLE*100));
+  document.getElementById('stat-bar').innerHTML=`
+    <div class="stat">
+      <div class="stat-label">Orders Complete</div>
+      <div class="stat-val">${st.completedRows}<span style="font-size:13px;color:var(--muted)"> / ${NUM_VISIBLE}</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Steps Done</div>
+      <div class="stat-val g">${st.done}</div>
+      <div class="stat-sub">${st.stepsLen} steps × ${NUM_VISIBLE} rows</div>
+    </div>
+    <div class="stat" style="${st.running?'border-color:#f7a76c55':''}">
+      <div class="stat-label" style="${st.running?'color:var(--timing)':''}">Active timers</div>
+      <div class="stat-val" style="${st.running?'color:var(--timing);':''}font-size:22px">${st.running}</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Total step time</div>
+      <div class="stat-val g" style="font-size:14px">${fmtElapsed(st.elapsed)||'—'}</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Wall clock</div>
+      <div class="stat-val" style="font-size:14px">${fmtElapsed(st.wall)||'—'}</div>
+      <div class="stat-sub">first start → last stop</div>
+    </div>`;
+  document.getElementById('hdr-sub').textContent=SCENARIOS[cur].label+' · '+SCENARIOS[cur].steps.length+' steps · '+TOTAL_ROWS+' rows';
 }
 
 function renderMain(){
-  const s=SCENARIOS[cur], d=liveData[s.id]||{}, sid=s.id;
-  Object.values(clockIntervals).forEach(clearInterval); clockIntervals={};
-  let html='<div class="desc">'+s.desc+'</div>'+
-           '<div class="hint">'+
-             '<span class="hk orange">▶ Start Time</span> starts the clock independently for each step — '+
-             '<span class="hk red">■ Stop Time</span> locks it in. Multiple steps can run at the same time.'+
-           '</div>'+
-           '<div class="table-wrap"><table><thead><tr><th class="row-label"></th>';
+  const s=SCENARIOS[cur],d=liveData[s.id]||{},sid=s.id;
+  const stepsLen=s.steps.length;
+  Object.values(clockIntervals).forEach(clearInterval);clockIntervals={};
+
+  let html=`<div class="desc">${s.desc}</div>
+  <div class="hint">
+    <span class="hk orange">▶ Start Time</span> starts the clock —
+    <span class="hk red">■ Stop Time</span> locks it in.
+    <span class="hk" style="color:var(--accent2);background:#4fd1b018">Green</span> = confirmed ·
+    <span class="hk orange">Yellow</span> = on deck.
+  </div>
+  <div class="table-wrap"><table><thead><tr><th class="row-label"></th>`;
+
   s.steps.forEach(step=>{
     const c=DEPT_COLORS[step.dept]||'#888';
-    html+='<th class="step-col" style="border-top:2px solid '+c+'44;padding-top:6px">'+
-            '<div class="dep-label" style="color:'+c+'">'+step.dept+'</div>'+
-            '<div class="step-name-lbl">'+step.name+'</div>'+
-          '</th>';
+    html+=`<th class="step-col" style="border-top:2px solid ${c}44;padding-top:6px">
+      <div class="dep-label" style="color:${c}">${step.dept}</div>
+      <div class="step-name-lbl">${step.name}</div>
+    </th>`;
   });
-  html+='</tr></thead><tbody><tr><td class="row-label">Step</td>';
-  s.steps.forEach((step,i)=>{
-    const sd=d[i]||{};
-    const isDone=!!sd.endTs, isRunning=!!(sd.startTs && !sd.endTs);
-    const isMyDept = user && (user.dept==='Admin' || user.dept===step.dept);
-    const val = sd.txn||'';
-    html+='<td class="cell"><div class="cell-inner">'+
-      '<input class="txn-input'+(val?' has-val':'')+'" type="text" value="'+val.replace(/"/g,'&quot;')+'" placeholder="Confirmation #" '+((!isMyDept||isDone)?'disabled':'')+' '+
-        'onchange="commitTxn(\''+sid+'\','+i+',this.value)" '+
-        'onkeydown="if(event.key===\'Enter\'){commitTxn(\''+sid+'\','+i+',this.value);this.blur()}" />'+
-      '<div class="timer-row">';
-    if(!isRunning && !isDone && isMyDept){
-      html+='<button class="btn-start" onclick="startTimer(\''+sid+'\','+i+')">▶ Start Time</button>';
+  html+='</tr></thead><tbody>';
+
+  for(let r=0;r<TOTAL_ROWS;r++){
+    const isCollapsed=r>=NUM_VISIBLE;
+
+    // On-deck: first empty step in the row
+    let onDeckIdx=-1;
+    for(let i=0;i<stepsLen;i++){
+      if(!(d[r*stepsLen+i]||{}).txn){onDeckIdx=i;break;}
     }
-    if(isRunning && isMyDept){
-      html+='<button class="btn-stop" onclick="stopTimer(\''+sid+'\','+i+')">■ Stop Time</button>'+
-            '<div class="live-clock" id="clk_'+sid+'_'+i+'">'+fmtLive(sd.startTs)+'</div>';
+
+    html+=`<tr${isCollapsed?' class="collapsed-row" style="display:none"':''}><td class="row-label">Order ${r+1}</td>`;
+
+    for(let i=0;i<stepsLen;i++){
+      const step=s.steps[i];
+      const gi=r*stepsLen+i;
+      const sd=d[gi]||{};
+      const isDone=!!sd.endTs,isRunning=!!(sd.startTs&&!sd.endTs);
+      const isMyDept=user&&(user.dept==='Admin'||user.dept===step.dept);
+      const val=sd.txn||'';
+      const isOnDeck=(i===onDeckIdx);
+
+      let cls='txn-input';
+      if(val) cls+=' has-val';
+      else if(isOnDeck) cls+=' on-deck';
+
+      html+=`<td class="cell"><div class="cell-inner">
+        <input class="${cls}" type="text"
+          value="${val.replace(/"/g,'&quot;')}"
+          placeholder="Confirmation #"
+          ${(!isMyDept||isDone)?'disabled':''}
+          onchange="commitTxn('${sid}',${gi},this.value)"
+          onkeydown="if(event.key==='Enter'){commitTxn('${sid}',${gi},this.value);this.blur()}"
+        />
+        <div class="timer-row">`;
+
+      if(isOnDeck&&isMyDept){
+        if(!isRunning&&!isDone){
+          html+=`<button class="btn-start" onclick="startTimer('${sid}',${gi})">▶ Start Time</button>`;
+        }
+        if(isRunning){
+          html+=`<button class="btn-stop" onclick="stopTimer('${sid}',${gi})">■ Stop Time</button>
+          <div class="live-clock" id="clk_${sid}_${gi}">${fmtLive(sd.startTs)}</div>`;
+        }
+        if(isDone){
+          html+=`<div class="elapsed-done">✓ ${fmtElapsed(sd.elapsed)||'<1s'}</div>`;
+          html+=`<button class="btn-reset" onclick="resetStep('${sid}',${gi})" title="Reset step">↺</button>`;
+        }
+      }else if(isDone){
+        html+=`<div class="elapsed-done">✓ ${fmtElapsed(sd.elapsed)||'<1s'}</div>`;
+        if(isMyDept) html+=`<button class="btn-reset" onclick="resetStep('${sid}',${gi})" title="Reset step">↺</button>`;
+      }
+
+      html+='</div>';
+      if(sd.who) html+=`<div class="who-lbl">${sd.who}${sd.startTs?' · '+fmtTs(sd.startTs):''}</div>`;
+      html+='</div></td>';
     }
-    if(isDone){
-      html+='<div class="elapsed-done">✓ '+(fmtElapsed(sd.elapsed)||'<1s')+'</div>';
-      if(isMyDept) html+='<button class="btn-reset" onclick="resetStep(\''+sid+'\','+i+')" title="Reset step">↺</button>';
+
+    html+='</tr>';
+
+    // Show/hide toggle row after the last always-visible row
+    if(r===NUM_VISIBLE-1){
+      html+=`<tr><td colspan="${stepsLen+1}" class="show-more-cell">
+        <button class="btn btn-g" style="font-size:11px;padding:5px 16px" onclick="toggleCollapsed(this)">▼ Show ${NUM_COLLAPSED} more rows</button>
+      </td></tr>`;
     }
-    html+='</div>';
-    if(sd.who) html+='<div class="who-lbl">'+sd.who+(sd.startTs?' · '+fmtTs(sd.startTs):'')+'</div>';
-    html+='</div></td>';
-  });
-  html+='</tr></tbody></table></div>';
+  }
+
+  html+='</tbody></table></div>';
   document.getElementById('main').innerHTML=html;
-  // start live clocks
-  s.steps.forEach((_,i)=>{
-    const sd=d[i]||{};
-    if(sd.startTs && !sd.endTs){
-      const key=sid+'_'+i;
-      clockIntervals[key]=setInterval(()=>{
-        const el=document.getElementById('clk_'+sid+'_'+i);
-        if(el) el.textContent=fmtLive(sd.startTs);
-      },200);
+
+  // Restart live clocks for any running timers
+  for(let r=0;r<TOTAL_ROWS;r++){
+    for(let i=0;i<stepsLen;i++){
+      const gi=r*stepsLen+i;
+      const sd=d[gi]||{};
+      if(sd.startTs&&!sd.endTs){
+        const key=`${sid}_${gi}`;
+        clockIntervals[key]=setInterval(()=>{
+          const el=document.getElementById(`clk_${sid}_${gi}`);
+          if(el) el.textContent=fmtLive(sd.startTs);
+        },200);
+      }
     }
-  });
+  }
+}
+
+function toggleCollapsed(btn){
+  const rows=document.querySelectorAll('tr.collapsed-row');
+  const hidden=rows.length&&rows[0].style.display==='none';
+  rows.forEach(r=>r.style.display=hidden?'':'none');
+  btn.textContent=hidden?('▲ Hide '+NUM_COLLAPSED+' extra rows'):('▼ Show '+NUM_COLLAPSED+' more rows');
 }
 
 function renderFeed(){
@@ -510,12 +587,11 @@ function renderFeed(){
     return;
   }
   list.innerHTML=feedItems.slice(0,20).map(item=>
-    '<div class="feed-item">'+
-      '<span class="who">'+item.who+'</span>'+
-      '<span style="color:var(--muted)"> ('+item.dept+') — '+item.action+' · '+
-      '<span style="color:var(--text)">'+item.step+'</span> ['+item.scenario+']</span>'+
-      '<span class="ts">'+fmtTs(item.ts)+'</span>'+
-    '</div>'
+    `<div class="feed-item">
+      <span class="who">${item.who}</span>
+      <span style="color:var(--muted)"> (${item.dept}) — ${item.action} · <span style="color:var(--text)">${item.step}</span> [${item.scenario}]</span>
+      <span class="ts">${fmtTs(item.ts)}</span>
+    </div>`
   ).join('');
 }
 
@@ -528,19 +604,23 @@ function clearScenario(){
 }
 
 function exportCSV(){
-  const s=SCENARIOS[cur], d=liveData[s.id]||{};
-  const hdrs=['Step','Department','Confirmation #','Who','Start Time','End Time','Elapsed'];
-  const rows=s.steps.map((st,i)=>{
-    const sd=d[i]||{};
-    return[st.name,st.dept,sd.txn||'',sd.who||'',
-      sd.startIso?new Date(sd.startIso).toLocaleString():'',
-      sd.endIso?new Date(sd.endIso).toLocaleString():'',
-      fmtElapsed(sd.elapsed)||''];
-  });
+  const s=SCENARIOS[cur],d=liveData[s.id]||{};
+  const stepsLen=s.steps.length;
+  const hdrs=['Order','Step','Department','Confirmation #','Who','Start Time','End Time','Elapsed'];
+  const rows=[];
+  for(let r=0;r<TOTAL_ROWS;r++){
+    for(let i=0;i<stepsLen;i++){
+      const gi=r*stepsLen+i,sd=d[gi]||{},st=s.steps[i];
+      rows.push([r+1,st.name,st.dept,sd.txn||'',sd.who||'',
+        sd.startIso?new Date(sd.startIso).toLocaleString():'',
+        sd.endIso?new Date(sd.endIso).toLocaleString():'',
+        fmtElapsed(sd.elapsed)||'']);
+    }
+  }
   const csv=[hdrs,...rows].map(r=>r.map(v=>'"'+String(v||'').replace(/"/g,'""')+'"').join(',')).join('\n');
   const a=document.createElement('a');
   a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
-  a.download=s.id+'_tracking.csv'; a.click();
+  a.download=s.id+'_tracking.csv';a.click();
 }
 
 loadUser();
