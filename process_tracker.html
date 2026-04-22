@@ -68,10 +68,20 @@ thead th.row-label{min-width:100px;color:var(--muted);font-weight:400;position:s
 tbody td.row-label{font-size:11px;color:var(--muted);font-family:var(--mono);padding-right:10px;white-space:nowrap;vertical-align:top;padding-top:8px;position:sticky;left:0;background:var(--bg);z-index:1}
 .cell{padding:3px 5px 3px 0;vertical-align:top}
 .cell-inner{display:flex;flex-direction:column;gap:4px;min-width:178px}
-.txn-input{width:100%;background:var(--input);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:var(--mono);font-size:12px;padding:5px 8px;outline:none;transition:border .15s}
+
+/* confirmation input */
+.txn-input{width:100%;background:var(--input);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:var(--mono);font-size:12px;padding:5px 8px;outline:none;transition:all .15s}
 .txn-input:focus{border-color:var(--accent);background:#1a1a24}
-.txn-input.has-val{border-color:#253a30}
-.txn-input:disabled{opacity:.4;cursor:not-allowed}
+.txn-input.has-val{border-color:#4fd1b077;background:#4fd1b018;color:#a8edda;}
+.txn-input.on-deck{border-color:#f7a76c99;background:#f7a76c18;animation:pulse-yellow 2s infinite}
+@keyframes pulse-yellow{0%,100%{border-color:#f7a76c66}50%{border-color:#f7a76ccc}}
+.txn-input:disabled{opacity:.35;cursor:not-allowed}
+.txn-input.has-val:disabled{opacity:1}
+.txn-input.on-deck:disabled{opacity:1}
+/* show-more toggle */
+.show-more-cell{padding:7px 0;text-align:center;border-top:2px dashed var(--border)}
+
+/* timer controls */
 .timer-row{display:flex;align-items:center;gap:4px}
 .btn-start{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:4px;font-size:10px;font-family:var(--mono);font-weight:500;cursor:pointer;background:#f7a76c15;color:var(--timing);border:1px solid #f7a76c44;transition:all .15s;white-space:nowrap}
 .btn-start:hover{background:#f7a76c25;border-color:var(--timing)}
