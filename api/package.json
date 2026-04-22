@@ -1,9 +1,8 @@
 {
-  "name": "invex-training-api",
-  "version": "1.0.0",
-  "description": "Azure Functions API for Invex Training progress storage",
-  "main": "index.js",
-  "dependencies": {
-    "@azure/storage-blob": "^12.17.0"
-  }
+    "name": "invex-training-api",
+    "version": "1.0.0",
+    "description": "Azure Functions API for Invex Training progress storage",
+    "dependencies": {
+          "@azure/storage-blob": "^12.17.0"
+    }
 }
