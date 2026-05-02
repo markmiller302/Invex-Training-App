@@ -202,8 +202,8 @@ html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:va
 /* SCHEDULE */
 .schedule{display:flex;border-radius:8px;overflow:hidden;border:1px solid var(--border);margin-bottom:1.5rem}
 .sched-block{flex:1;padding:8px 6px;text-align:center;font-size:9px;font-family:var(--mono);font-weight:500;cursor:default;position:relative}
-.sched-block .sl{color:#ffffffcc;font-size:9px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px}
-.sched-block .st{font-size:8px;opacity:.6}
+.sched-block .sl{color:rgba(255,255,255,.85);font-size:9px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px}
+.sched-block .st{font-size:8px;color:rgba(255,255,255,.65)}
 .sched-block.now::after{content:'NOW';position:absolute;top:2px;right:3px;font-size:7px;background:var(--accent2);color:#000;border-radius:2px;padding:0 2px;font-weight:700}
 .sb-intro{background:#1e1e2e}.sb-beg{background:#122418}.sb-brk{background:#15151e}.sb-int{background:#16122e}.sb-adv{background:#221810}.sb-deb{background:#101820}
 
@@ -473,6 +473,7 @@ html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:va
 .gloss-no-match{padding:2.5rem 1.25rem;text-align:center;color:var(--muted);font-size:12px}
 </style>
 <script>/* apply theme before paint to avoid flash */(function(){var s=localStorage.getItem('invex_theme'),dark=s?s==='dark':!window.matchMedia||window.matchMedia('(prefers-color-scheme:dark)').matches;if(!dark)document.documentElement.setAttribute('data-theme','light');})();</script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 </head>
 <body>
 
@@ -6567,14 +6568,46 @@ function cycleStatus(e, id) {
 function ckStep(el) {
   el.classList.toggle('ck');
   el.nextElementSibling.classList.toggle('ck');
-  // Update LP progress bar for the day that contains this step
   const view = el.closest('[id$="-view"]');
   if (view) {
     const m = view.id.match(/day(\d+)/);
-    if (m) updateLPProgress(m[1]);
+    if (m) { updateLPProgress(m[1]); _saveCkState(m[1]); }
   }
 }
 function ckDebrief(el) { el.classList.toggle('ck'); }
+
+// ── CHECKLIST PERSISTENCE (localStorage, per-user) ────────────────────────────
+function _getUserId(){
+  const n=sessionStorage.getItem('training_user_name')||'';
+  const d=sessionStorage.getItem('training_user_dept')||'';
+  return (n||d)?encodeURIComponent((n+'_'+d).toLowerCase().replace(/\s+/g,'_')):'';
+}
+function _saveCkState(day){
+  const uid=_getUserId(); if(!uid) return;
+  const view=document.getElementById('day'+day+'-view'); if(!view) return;
+  const checks=view.querySelectorAll('.step-check');
+  const ckd=[];
+  checks.forEach((el,i)=>{ if(el.classList.contains('ck')) ckd.push(i); });
+  try{ localStorage.setItem('invex_ck_'+uid+'_d'+day,JSON.stringify(ckd)); }catch(e){}
+}
+function restoreCkState(day){
+  const uid=_getUserId(); if(!uid) return;
+  try{
+    const s=localStorage.getItem('invex_ck_'+uid+'_d'+day); if(!s) return;
+    const ckd=JSON.parse(s);
+    const view=document.getElementById('day'+day+'-view'); if(!view) return;
+    const checks=view.querySelectorAll('.step-check');
+    ckd.forEach(i=>{
+      if(checks[i]){
+        checks[i].classList.add('ck');
+        const lbl=checks[i].nextElementSibling;
+        if(lbl) lbl.classList.add('ck');
+      }
+    });
+    updateLPProgress(day);
+  }catch(e){}
+}
+function restoreAllCkStates(){ ['2','3','4'].forEach(d=>restoreCkState(d)); }
 
 // ── SCROLL NAV ────────────────────────────────────────────────────────────────
 function scrollToD2(id) {
@@ -7146,7 +7179,8 @@ const StorageAPI = {
     const quizStates = {};
     for (let d = 1; d <= 5; d++) {
       try {
-        const s = sessionStorage.getItem('invex_quiz_d' + d);
+        const key = this._userId ? 'invex_quiz_'+this._userId+'_d'+d : 'invex_quiz_d'+d;
+        const s = localStorage.getItem(key) || sessionStorage.getItem('invex_quiz_d' + d);
         if (s) quizStates[d] = JSON.parse(s);
       } catch(e) {}
     }
@@ -7414,15 +7448,21 @@ function toggleCodeField(btn) {
     if (savedRole !== 'trainee') applyFacilitatorMode(savedRole);
     // Restore quiz states from blob in the background
     StorageAPI.loadProgress().then(prog => {
-      if (!prog) return;
+      if (!prog) { restoreAllCkStates(); return; }
       if (prog.quizStates) {
         Object.entries(prog.quizStates).forEach(([d, state]) => {
-          try { sessionStorage.setItem('invex_quiz_d' + d, JSON.stringify(state)); } catch(e) {}
+          try {
+            const key = StorageAPI._userId ? 'invex_quiz_'+StorageAPI._userId+'_d'+d : 'invex_quiz_d'+d;
+            localStorage.setItem(key, JSON.stringify(state));
+            sessionStorage.setItem('invex_quiz_d' + d, JSON.stringify(state));
+          } catch(e) {}
         });
+        qzRefreshCards();
       }
       if (prog.facConfig) {
         try { sessionStorage.setItem('fac_path_config', JSON.stringify(prog.facConfig)); } catch(e) {}
       }
+      restoreAllCkStates();
     });
   } else {
     document.getElementById('login-overlay').classList.remove('hidden');
@@ -7454,6 +7494,21 @@ function submitLogin() {
 
   // Set StorageAPI identity and persist to blob
   StorageAPI.setUser(name, dept, role);
+  // Restore quiz progress from blob, then refresh cards and checklists
+  StorageAPI.loadProgress().then(function(prog){
+    if(prog && prog.quizStates){
+      Object.entries(prog.quizStates).forEach(function(entry){
+        var d=entry[0], state=entry[1];
+        try{
+          var key=StorageAPI._userId?'invex_quiz_'+StorageAPI._userId+'_d'+d:'invex_quiz_d'+d;
+          localStorage.setItem(key,JSON.stringify(state));
+          sessionStorage.setItem('invex_quiz_d'+d,JSON.stringify(state));
+        }catch(e){}
+      });
+      qzRefreshCards();
+    }
+    restoreAllCkStates();
+  });
   StorageAPI.snapshot();
 }
 
@@ -7566,13 +7621,20 @@ var QUIZ_DATA = {
 // Per-day active sessions
 var activeQuiz = {};
 
+function _qzKey(day){
+  var uid=_getUserId();
+  return uid?'invex_quiz_'+uid+'_d'+day:'invex_quiz_d'+day;
+}
 function qzGetState(day) {
-  var s = sessionStorage.getItem('invex_quiz_d' + day);
-  return s ? JSON.parse(s) : {attempts:0, bestScore:-1, passed:false};
+  try{
+    var s=localStorage.getItem(_qzKey(day))||sessionStorage.getItem('invex_quiz_d'+day);
+    return s?JSON.parse(s):{attempts:0,bestScore:-1,passed:false};
+  }catch(e){ return {attempts:0,bestScore:-1,passed:false}; }
 }
 function qzSaveState(day, state) {
-  sessionStorage.setItem('invex_quiz_d' + day, JSON.stringify(state));
-  StorageAPI.snapshot(); // persist quiz progress to blob
+  try{ localStorage.setItem(_qzKey(day),JSON.stringify(state)); }catch(e){}
+  try{ sessionStorage.setItem('invex_quiz_d'+day,JSON.stringify(state)); }catch(e){}
+  StorageAPI.snapshot();
 }
 
 function startQuiz(day) {
@@ -7673,6 +7735,13 @@ function qzShowResult(day, score, answers, questions) {
     '<div class="quiz-result-actions"><a href="'+mailHref+'" class="quiz-email-btn">Email Results to Facilitator</a>'+retryBtn+'</div>' +
     '<div>'+reviewHtml+'</div>';
   resultEl.style.display = 'block';
+  if(passed && typeof confetti !== 'undefined'){
+    setTimeout(function(){
+      confetti({particleCount:140,spread:80,origin:{y:0.55},colors:['#7c6af7','#4fd1b0','#f7a76c','#e879b0','#60c0f5']});
+      setTimeout(function(){ confetti({particleCount:60,spread:50,origin:{y:0.5,x:0.2}}); },400);
+      setTimeout(function(){ confetti({particleCount:60,spread:50,origin:{y:0.5,x:0.8}}); },600);
+    },300);
+  }
 }
 
 function qzRetry(day) {
@@ -7729,6 +7798,18 @@ function qzInit() {
     main.appendChild(div);
   }
 }
+
+function qzRefreshCards(){
+  for(var d=1;d<=5;d++){
+    var main=document.querySelector('#day'+d+'-view main'); if(!main) continue;
+    var found=null;
+    Array.from(main.children).forEach(function(div){
+      if(div.querySelector&&div.querySelector('.quiz-card')) found=div;
+    });
+    if(found) found.innerHTML=qzBuildCard(d);
+  }
+}
+
 qzInit();
 
 // Remove process map blocks inside scenario cards — they live in the sidebar

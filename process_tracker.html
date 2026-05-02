@@ -105,6 +105,14 @@ tbody td.row-label{font-size:11px;color:var(--muted);font-family:var(--mono);pad
 .btn-d{background:none;color:#e24b4a;border:1px solid #e24b4a33}.btn-d:hover{background:#e24b4a15}
 #save-msg{font-size:11px;color:var(--muted);font-family:var(--mono);margin-left:auto}
 @keyframes spin{to{transform:rotate(360deg)}}
+/* fixed horizontal scrollbar — always visible at viewport bottom */
+.table-wrap{overflow-x:scroll;scrollbar-width:none;-ms-overflow-style:none}
+.table-wrap::-webkit-scrollbar{display:none}
+#hscroll-bar{position:fixed;bottom:0;left:0;right:0;z-index:200;overflow-x:auto;height:16px;background:var(--bg);border-top:1px solid var(--border)}
+#hscroll-inner{height:1px}
+body{padding-bottom:20px}
+.btn-clear-txn{display:inline-flex;align-items:center;padding:2px 5px;border-radius:3px;font-size:9px;font-family:var(--mono);cursor:pointer;background:none;color:var(--muted);border:1px solid var(--border);transition:all .15s;white-space:nowrap;margin-bottom:2px}
+.btn-clear-txn:hover{color:#e24b4a;border-color:#e24b4a55}
 </style>
 </head>
 <body>
@@ -163,6 +171,7 @@ tbody td.row-label{font-size:11px;color:var(--muted);font-family:var(--mono);pad
     <button class="btn btn-d" id="clear-btn" onclick="clearScenario()" style="display:none">Clear scenario (admin)</button>
     <span id="save-msg"></span>
   </div>
+  <div id="hscroll-bar"><div id="hscroll-inner"></div></div>
 </div>
 <script>
 // ── SCENARIO DEFINITIONS ──
@@ -264,9 +273,20 @@ function startPolling(){
 async function loadData(){
   try{
     const state = await apiGetState();
-    // Merge in remote state (last-writer-wins). We only overwrite if remote
-    // looks newer, otherwise we risk blowing away an in-flight local change.
-    if(state && state.steps){ liveData = state.steps; }
+    if(state && state.steps){
+      const remote=state.steps;
+      // Preserve any locally-running timers not yet written to the server
+      if(liveData){
+        Object.keys(liveData).forEach(sid=>{
+          if(!remote[sid]) remote[sid]={};
+          Object.keys(liveData[sid]).forEach(idx=>{
+            const loc=liveData[sid][idx];
+            if(loc && loc.startTs && !loc.endTs) remote[sid][idx]=loc;
+          });
+        });
+      }
+      liveData=remote;
+    }
     if(state && Array.isArray(state.activity)){ feedItems = state.activity; }
     setConn('live');
     renderStatBar(); renderMain(); updateBanner(); renderFeed();
@@ -325,6 +345,12 @@ function commitTxn(sid,idx,val){
 function resetStep(sid,idx){
   if(!confirm('Reset this step? Clears timer and confirmation number.')) return;
   writeStep(sid,idx,{txn:null,startTs:null,endTs:null,elapsed:null,startIso:null,endIso:null,who:null,dept:null});
+}
+function clearTxn(sid,idx){
+  if(!liveData[sid]||!liveData[sid][idx]) return;
+  liveData[sid][idx].txn='';
+  renderStatBar(); renderMain(); updateBanner();
+  scheduleSave();
 }
 
 function writeStep(sid,idx,updates){
@@ -466,6 +492,7 @@ function renderStatBar(){
 }
 
 function renderMain(){
+  const prevScroll=(document.querySelector('.table-wrap')||{}).scrollLeft||0;
   const s=SCENARIOS[cur],d=liveData[s.id]||{},sid=s.id;
   const stepsLen=s.steps.length;
   Object.values(clockIntervals).forEach(clearInterval);clockIntervals={};
@@ -519,8 +546,9 @@ function renderMain(){
           ${(!isMyDept||isDone)?'disabled':''}
           onchange="commitTxn('${sid}',${gi},this.value)"
           onkeydown="if(event.key==='Enter'){commitTxn('${sid}',${gi},this.value);this.blur()}"
-        />
-        <div class="timer-row">`;
+        />`;
+      if(val&&isMyDept) html+=`<button class="btn-clear-txn" onclick="clearTxn('${sid}',${gi})" title="Clear confirmation number">× clear</button>`;
+      html+=`<div class="timer-row">`;
 
       if(isOnDeck&&isMyDept){
         if(!isRunning&&!isDone){
@@ -556,6 +584,9 @@ function renderMain(){
 
   html+='</tbody></table></div>';
   document.getElementById('main').innerHTML=html;
+  const tw=document.querySelector('.table-wrap');
+  if(tw&&prevScroll) tw.scrollLeft=prevScroll;
+  syncHScroll();
 
   // Restart live clocks for any running timers
   for(let r=0;r<TOTAL_ROWS;r++){
@@ -621,6 +652,31 @@ function exportCSV(){
   const a=document.createElement('a');
   a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
   a.download=s.id+'_tracking.csv';a.click();
+}
+
+// ── FIXED HORIZONTAL SCROLLBAR SYNC ──
+let _hss=false;
+function _onWrapScroll(){
+  if(_hss) return; _hss=true;
+  const b=document.getElementById('hscroll-bar'),w=document.querySelector('.table-wrap');
+  if(b&&w) b.scrollLeft=w.scrollLeft;
+  _hss=false;
+}
+function _onBarScroll(){
+  if(_hss) return; _hss=true;
+  const b=document.getElementById('hscroll-bar'),w=document.querySelector('.table-wrap');
+  if(b&&w) w.scrollLeft=b.scrollLeft;
+  _hss=false;
+}
+function syncHScroll(){
+  const w=document.querySelector('.table-wrap'),b=document.getElementById('hscroll-bar'),inner=document.getElementById('hscroll-inner');
+  if(!w||!b||!inner) return;
+  const tbl=w.querySelector('table');
+  if(tbl) inner.style.width=tbl.scrollWidth+'px';
+  w.removeEventListener('scroll',_onWrapScroll);
+  b.removeEventListener('scroll',_onBarScroll);
+  w.addEventListener('scroll',_onWrapScroll,{passive:true});
+  b.addEventListener('scroll',_onBarScroll,{passive:true});
 }
 
 loadUser();
