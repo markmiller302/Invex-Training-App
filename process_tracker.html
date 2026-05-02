@@ -493,6 +493,9 @@ function renderStatBar(){
 
 function renderMain(){
   const prevScroll=(document.querySelector('.table-wrap')||{}).scrollLeft||0;
+  const activeEl=document.activeElement;
+  const activeId=(activeEl&&activeEl.classList.contains('txn-input'))?activeEl.id:null;
+  const activeVal=activeId?activeEl.value:null;
   const s=SCENARIOS[cur],d=liveData[s.id]||{},sid=s.id;
   const stepsLen=s.steps.length;
   Object.values(clockIntervals).forEach(clearInterval);clockIntervals={};
@@ -540,7 +543,7 @@ function renderMain(){
       else if(isOnDeck) cls+=' on-deck';
 
       html+=`<td class="cell"><div class="cell-inner">
-        <input class="${cls}" type="text"
+        <input id="inp_${sid}_${gi}" class="${cls}" type="text"
           value="${val.replace(/"/g,'&quot;')}"
           placeholder="Confirmation #"
           ${(!isMyDept||isDone)?'disabled':''}
@@ -587,6 +590,10 @@ function renderMain(){
   const tw=document.querySelector('.table-wrap');
   if(tw&&prevScroll) tw.scrollLeft=prevScroll;
   syncHScroll();
+  if(activeId){
+    const el=document.getElementById(activeId);
+    if(el){el.value=activeVal;el.focus();}
+  }
 
   // Restart live clocks for any running timers
   for(let r=0;r<TOTAL_ROWS;r++){
