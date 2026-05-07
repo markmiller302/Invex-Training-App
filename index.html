@@ -2036,7 +2036,7 @@ html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:va
             <button class="ste-restart-btn" onclick="steRestart('d2')">&#8635; Reset</button>
           </div>
         </div>
-        <div class="ste-instruct">Read the sales order below. Click any field you think contains an error. When you&rsquo;re done, click Check Answers.</div>
+        <div class="ste-instruct">A sample customer PO is shown at the top of each scenario — use it as your reference. Then review the sales order entered in Invex below it. Click any field you think was entered incorrectly, then click Check Answers.</div>
         <div class="ste-score" id="ste-d2-score"></div>
         <div class="ste-tabs" id="ste-d2-tabs"></div>
         <div class="ste-doc-title" id="ste-d2-title"></div>
@@ -3633,7 +3633,7 @@ html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:va
             <button class="ste-restart-btn" onclick="steRestart('d3')">&#8635; Reset</button>
           </div>
         </div>
-        <div class="ste-instruct">Read the blanket release record below. Click any field you think contains an error. When you&rsquo;re done, click Check Answers.</div>
+        <div class="ste-instruct">A customer release request is shown at the top of each scenario — use it as your reference. Then review the release record entered in Invex below it. Click any field you think was entered incorrectly, then click Check Answers.</div>
         <div class="ste-score" id="ste-d3-score"></div>
         <div class="ste-tabs" id="ste-d3-tabs"></div>
         <div class="ste-doc-title" id="ste-d3-title"></div>
@@ -5037,7 +5037,7 @@ html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:va
             <button class="ste-restart-btn" onclick="steRestart('d4')">&#8635; Reset</button>
           </div>
         </div>
-        <div class="ste-instruct">Review the toll processing order below. Click any field you think contains an error. When you&rsquo;re done, click Check Answers.</div>
+        <div class="ste-instruct">A sample customer PO is shown at the top of each scenario — use it as your reference. Then review the toll order entered in Invex below it. Click any field you think was entered incorrectly, then click Check Answers.</div>
         <div class="ste-score" id="ste-d4-score"></div>
         <div class="ste-tabs" id="ste-d4-tabs"></div>
         <div class="ste-doc-title" id="ste-d4-title"></div>
@@ -6026,6 +6026,18 @@ html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:va
 .ste-row.ste-revealed-correct .ste-reveal-note,.ste-row.ste-revealed-missed .ste-reveal-note,.ste-row.ste-revealed-false .ste-reveal-note{display:block}
 .ste-row.ste-revealed-correct .ste-reveal-note{color:var(--accent2)}
 .ste-row.ste-revealed-missed .ste-reveal-note{color:#ef4444}
+/* PO reference document */
+.ste-po-doc{background:var(--bg);border:1.5px solid #f0b42955;border-radius:8px;overflow:hidden;margin-bottom:.65rem}
+.ste-po-hdr{background:#f0b42910;border-bottom:1px solid #f0b42930;padding:.55rem .85rem;display:flex;align-items:center;gap:.65rem;flex-wrap:wrap}
+.ste-po-badge{background:#f0b429;color:#0b0c10;font-size:9px;font-weight:700;font-family:var(--mono);padding:.2rem .55rem;border-radius:4px;letter-spacing:.07em;text-transform:uppercase;flex-shrink:0}
+.ste-po-title{font-size:12px;font-weight:700;color:var(--text);font-family:var(--mono)}
+.ste-po-sub{margin-left:auto;font-size:9px;font-family:var(--mono);color:var(--muted);font-style:italic;white-space:nowrap}
+.ste-po-fields{padding:.45rem .65rem}
+.ste-po-row{display:flex;align-items:baseline;gap:.4rem;margin-bottom:3px;padding:.18rem .3rem}
+.ste-po-label{min-width:155px;max-width:155px;font-size:10px;color:var(--muted);font-family:var(--mono);text-align:right;flex-shrink:0;padding:.15rem .4rem}
+.ste-po-value{flex:1;font-size:11px;color:var(--text);font-family:var(--mono);padding:.18rem .6rem;background:var(--surface);border:1.5px solid #f0b42933;border-radius:4px}
+.ste-po-divider{font-size:9px;font-family:var(--mono);color:var(--muted);text-align:center;margin:.55rem 0 .5rem;letter-spacing:.08em;text-transform:uppercase;display:flex;align-items:center;gap:.5rem}
+.ste-po-divider::before,.ste-po-divider::after{content:'';flex:1;height:1px;background:var(--border)}
 .ste-row.ste-revealed-false .ste-reveal-note{color:var(--warn)}
 </style>
 
@@ -8474,6 +8486,24 @@ const STE_DATA = {
         { label: 'Entered by', value: 'Trainee' }
       ],
       setup: 'A new trainee entered this spot sale after receiving the customer\u2019s PO. Three fields contain errors \u2014 find them before this order is released to purchasing.',
+      po: {
+        title: 'Siskin Steel PO #168764',
+        doctype: 'sales order',
+        fields: [
+          { label: 'From', value: 'Siskin Steel & Supply \u2014 Nashville, TN' },
+          { label: 'PO Number', value: '168764' },
+          { label: 'PO Date', value: 'April 15, 2026' },
+          { label: 'Vendor', value: 'Steel Warehouse Company' },
+          { label: 'Material', value: 'HR Coil, 14 ga \u00d7 48\u2033 wide, A1011 CS Type B' },
+          { label: 'Quantity', value: '5 coils (approx. 40,000 lbs)' },
+          { label: 'Unit Price', value: '$28.50/cwt \u2014 Line 1 awarded' },
+          { label: 'Lines 2\u20133 Status', value: 'Not awarded \u2014 lost on price' },
+          { label: 'FOB', value: 'FOB Warehouse (Steel Warehouse facility)' },
+          { label: 'Payment Terms', value: 'Net 30' },
+          { label: 'Required Delivery', value: 'April 28, 2026' },
+          { label: 'Ship To', value: 'Siskin Steel, 1 Steel Way, Nashville, TN 37210' },
+        ]
+      },
       rows: [
         { label: 'Customer',          value: 'Siskin Steel \u2014 Nashville, TN',           error: false },
         { label: 'SO Type',           value: 'Regular Sales Order',                         error: false },
@@ -8500,6 +8530,24 @@ const STE_DATA = {
         { label: 'Entered by', value: 'Trainee' }
       ],
       setup: 'Review this sales order entry before it goes to purchasing. Three fields were entered incorrectly \u2014 find them.',
+      po: {
+        title: 'Steel Services, Inc. PO #6188N',
+        doctype: 'sales order',
+        fields: [
+          { label: 'From', value: 'Steel Services, Inc. \u2014 Richmond, VA' },
+          { label: 'PO Number', value: '6188N' },
+          { label: 'PO Date', value: 'April 15, 2026' },
+          { label: 'Vendor', value: 'Steel Warehouse Company' },
+          { label: 'Material', value: 'CR Coil, 16 ga \u00d7 36\u2033 wide' },
+          { label: 'Quantity', value: '3 coils (approx. 18,000 lbs)' },
+          { label: 'Unit Price', value: '$41.75/cwt' },
+          { label: 'FOB', value: 'FOB Warehouse' },
+          { label: 'Payment Terms', value: 'Net 30' },
+          { label: 'Required Delivery', value: 'May 23, 2026' },
+          { label: 'CPS', value: 'CPS-6188N \u2014 attached to this PO' },
+          { label: 'Ship To', value: 'Steel Services, 800 Maury St., Richmond, VA 23224' },
+        ]
+      },
       rows: [
         { label: 'Customer',          value: 'Steel Services, Inc. \u2014 Richmond, VA',    error: false },
         { label: 'PO# on SO',         value: '6818N',                                       error: true,
@@ -8525,6 +8573,24 @@ const STE_DATA = {
         { label: 'Entered by', value: 'Trainee' }
       ],
       setup: 'A trainee processed this spot sale and submitted it for review. Find the three errors before it moves forward.',
+      po: {
+        title: 'Cooksey Steel Company PO #75087',
+        doctype: 'sales order',
+        fields: [
+          { label: 'From', value: 'Cooksey Steel Company — Atlanta, GA' },
+          { label: 'PO Number', value: '75087' },
+          { label: 'PO Date', value: 'April 15, 2026' },
+          { label: 'Vendor', value: 'Steel Warehouse Company' },
+          { label: 'Order Type', value: 'One-time spot purchase — NOT a recurring or blanket order' },
+          { label: 'Material', value: 'HR Coil, 11 ga × 60″ wide' },
+          { label: 'Quantity', value: '7 coils (approx. 52,000 lbs)' },
+          { label: 'Unit Price', value: '$24.90/cwt' },
+          { label: 'FOB', value: 'FOB Warehouse' },
+          { label: 'Payment Terms', value: 'Net 30' },
+          { label: 'Required Delivery', value: 'June 5, 2026' },
+          { label: 'Ship To', value: 'Cooksey Steel, 220 Jonesboro Rd., Atlanta, GA 30315' },
+        ]
+      },
       rows: [
         { label: 'Customer',          value: 'Cooksey Steel Company \u2014 Atlanta, GA',    error: false },
         { label: 'SO Type',           value: 'Blanket Sales Order',                         error: true,
@@ -8552,6 +8618,20 @@ const STE_DATA = {
         { label: 'Entered by', value: 'Trainee' }
       ],
       setup: 'A trainee prepared this blanket release for review. Three fields contain errors \u2014 catch them before this release is submitted.',
+      po: {
+        title: 'Valmont Industries \u2014 Release Request #7 (BSO-4481)',
+        doctype: 'release record',
+        fields: [
+          { label: 'From', value: 'Valmont Industries' },
+          { label: 'Contract Reference', value: 'BSO-4481 \u2014 active Jan 2026\u2013Dec 2026' },
+          { label: 'Release Number', value: '7' },
+          { label: 'Date', value: 'April 15, 2026' },
+          { label: 'Material Spec', value: 'HR Coil per PPS-2241' },
+          { label: 'Required Ship', value: 'April 22, 2026 per release schedule' },
+          { label: 'Pricing', value: 'Per locked contract rate \u2014 BSO-4481' },
+          { label: 'Note from Valmont', value: 'Floor inventory confirmed with your team (April 14). Please ship from existing stock \u2014 no production needed.' },
+        ]
+      },
       rows: [
         { label: 'Blanket SO',        value: 'BSO-4481 \u2014 Valmont Industries',          error: false },
         { label: 'Contract Period',   value: 'Jan 2026 \u2013 Dec 2026',                    error: false },
@@ -8577,6 +8657,21 @@ const STE_DATA = {
         { label: 'Entered by', value: 'Trainee' }
       ],
       setup: 'Review this blanket release draft before it is submitted. Three fields are incorrect \u2014 find them.',
+      po: {
+        title: 'Caterpillar Inc. \u2014 Release Request #12 (BSO-3812)',
+        doctype: 'release record',
+        fields: [
+          { label: 'From', value: 'Caterpillar Inc.' },
+          { label: 'Contract Reference', value: 'BSO-3812' },
+          { label: 'Release Number', value: '12' },
+          { label: 'Date', value: 'April 15, 2026' },
+          { label: 'Material Spec', value: 'Per PPS-3812 on file' },
+          { label: 'Inventory Available', value: '8 coils confirmed available' },
+          { label: 'Required Ship', value: 'Per release schedule' },
+          { label: 'Pricing', value: 'Per contract terms \u2014 BSO-3812 pricing applies' },
+          { label: 'Carrier', value: 'Customer-arranged pickup' },
+        ]
+      },
       rows: [
         { label: 'Blanket SO',        value: 'BSO-3812 \u2014 Caterpillar Inc.',            error: false },
         { label: 'Contract Period',   value: 'Mar 2025 \u2013 Feb 2026',                    error: true,
@@ -8602,6 +8697,20 @@ const STE_DATA = {
         { label: 'Entered by', value: 'Trainee' }
       ],
       setup: 'A trainee configured this source production order. Three fields were set incorrectly \u2014 find them before the order is approved.',
+      po: {
+        title: 'ABC Steel \u2014 Contract Forecast & PPS Reference (BSO-5017)',
+        doctype: 'source production order',
+        fields: [
+          { label: 'From', value: 'ABC Steel' },
+          { label: 'Contract Reference', value: 'BSO-5017 \u2014 active annual contract' },
+          { label: 'Document Type', value: 'Annual contract with quarterly release forecast' },
+          { label: 'Date', value: 'April 15, 2026' },
+          { label: 'PPS Provided', value: 'PPS-5017 \u2014 attached and confirmed' },
+          { label: 'Upcoming Demand', value: 'Est. 3 releases over next 6 weeks based on forecast' },
+          { label: 'Mill Turn', value: 'Typical lead: 4\u20136 weeks (plan proactively)' },
+          { label: 'Note', value: 'Pre-build floor inventory ahead of first release to ensure on-time shipment \u2014 do not wait for release requests.' },
+        ]
+      },
       rows: [
         { label: 'Blanket SO',        value: 'BSO-5017 \u2014 ABC Steel',                  error: false },
         { label: 'Source Order Basis', value: 'On customer release request (reactive)',     error: true,
@@ -8629,6 +8738,23 @@ const STE_DATA = {
         { label: 'Entered by', value: 'Trainee' }
       ],
       setup: 'A trainee set up this toll processing order. Three fields contain errors \u2014 find them before this order moves to production.',
+      po: {
+        title: 'John Deere PO #4501439625',
+        doctype: 'toll order',
+        fields: [
+          { label: 'From', value: 'John Deere \u2014 Ankeny, IA' },
+          { label: 'PO Number', value: '4501439625' },
+          { label: 'PO Date', value: 'April 15, 2026' },
+          { label: 'Order Type', value: 'Toll Processing \u2014 customer-owned material' },
+          { label: 'Material Ownership', value: 'Customer-owned coil \u2014 DO NOT add to SWC inventory' },
+          { label: 'Processing Required', value: 'Per specification on file' },
+          { label: 'Processing Fee', value: '$420.00' },
+          { label: 'Invoice Instructions', value: 'Processing fee ONLY \u2014 do not invoice material cost' },
+          { label: 'FOB', value: 'FOB Origin \u2014 customer arranges outbound freight' },
+          { label: 'USMCA', value: 'Required \u2014 certificate must accompany shipment' },
+          { label: 'Shipping Docs', value: 'Reference PO# 4501439625 on all documents' },
+        ]
+      },
       rows: [
         { label: 'Order Type',        value: 'Toll Processing Order',                       error: false },
         { label: 'Customer',          value: 'John Deere \u2014 Ankeny, IA',               error: false },
@@ -8654,6 +8780,23 @@ const STE_DATA = {
         { label: 'Entered by', value: 'Trainee' }
       ],
       setup: 'Review this cross-border toll order before it is processed. Three fields are incorrect \u2014 one involves international shipping compliance.',
+      po: {
+        title: 'Peak Metals PO #PM-2026-04',
+        doctype: 'toll order',
+        fields: [
+          { label: 'From', value: 'Peak Metals \u2014 Ontario, Canada' },
+          { label: 'PO Number', value: 'PM-2026-04' },
+          { label: 'PO Date', value: 'April 15, 2026' },
+          { label: 'Ship-to Address', value: 'Peak Metals, 123 Industrial Rd., Mississauga, ON L5T 2P6, CANADA' },
+          { label: 'Order Type', value: 'Toll Processing \u2014 customer-owned material' },
+          { label: 'Processing Spec', value: 'Per CPS-PM-2026 \u2014 use customer spec only' },
+          { label: 'Processing Fee', value: '$380.00' },
+          { label: 'Invoice', value: 'Processing fee only \u2014 $380.00' },
+          { label: 'FOB', value: 'FOB Origin' },
+          { label: 'USMCA Required', value: 'Yes \u2014 USMCA Certificate of Origin required for Canadian shipment' },
+          { label: 'Shipping Docs', value: 'Reference PO# PM-2026-04 on ALL shipping documents' },
+        ]
+      },
       rows: [
         { label: 'Order Type',        value: 'Toll Processing Order',                       error: false },
         { label: 'Customer',          value: 'Peak Metals \u2014 Ontario, Canada',          error: false },
@@ -8679,6 +8822,20 @@ const STE_DATA = {
         { label: 'Entered by', value: 'Trainee' }
       ],
       setup: 'A trainee processed this specific toll order. Three fields contain errors \u2014 find them before output is staged for shipment.',
+      po: {
+        title: 'Valmont Industries \u2014 Specific Toll Order (Coil VM-44821)',
+        doctype: 'toll order',
+        fields: [
+          { label: 'From', value: 'Valmont Industries' },
+          { label: 'Coil Reference', value: 'VM-44821 \u2014 customer-owned coil' },
+          { label: 'Order Type', value: 'Specific Toll Processing' },
+          { label: 'CPS Reference', value: 'CPS-VM-44821 \u2014 verify ALL output against this spec' },
+          { label: 'Material Ownership', value: 'Customer-owned \u2014 do not add to SWC inventory' },
+          { label: 'Invoice', value: 'Processing fee ONLY \u2014 no material charges of any kind' },
+          { label: 'Production Note', value: 'Do NOT release to production until receipt of coil VM-44821 is confirmed' },
+          { label: 'Output Verification', value: 'Check all finished pieces against CPS-VM-44821 (not SWC standard spec)' },
+        ]
+      },
       rows: [
         { label: 'Order Type',        value: 'Toll Processing \u2014 Specific Toll',       error: false },
         { label: 'Customer',          value: 'Valmont Industries',                          error: false },
@@ -8730,8 +8887,25 @@ function steInit(day) {
     return '<span class="ste-form-meta-item">' + m.label + ': <b>' + m.value + '</b></span>';
   }).join('');
 
+  // Build PO reference doc if present
+  let poHtml = '';
+  if (data.po) {
+    const poFields = data.po.fields.map(function(f) {
+      return '<div class="ste-po-row"><span class="ste-po-label">' + f.label + '</span><span class="ste-po-value">' + f.value + '</span></div>';
+    }).join('');
+    poHtml =
+      '<div class="ste-po-doc">' +
+        '<div class="ste-po-hdr">' +
+          '<span class="ste-po-badge">CUSTOMER PO</span>' +
+          '<span class="ste-po-title">' + data.po.title + '</span>' +
+          '<span class="ste-po-sub">Reference — compare to the ' + (data.po.doctype || 'record') + ' below ↓</span>' +
+        '</div>' +
+        '<div class="ste-po-fields">' + poFields + '</div>' +
+      '</div>';
+  }
+
   // Build the document frame with header, setup banner, and a fields container
-  doc.innerHTML =
+  doc.innerHTML = poHtml +
     '<div class="ste-form-doc">' +
       '<div class="ste-form-hdr">' +
         '<div class="ste-form-hdr-top">' +
