@@ -6013,7 +6013,7 @@ html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:va
 .ste-row{display:flex;flex-wrap:wrap;align-items:flex-start;gap:.4rem;border-radius:5px;margin-bottom:4px;cursor:pointer;padding:.25rem .3rem;transition:background .12s;user-select:none}
 .ste-row:hover{background:var(--surface2)}
 .ste-row:hover .ste-value{border-color:var(--accent)}
-.ste-label{min-width:155px;max-width:155px;font-size:10px;color:var(--muted);font-family:var(--mono);padding:.42rem .4rem;flex-shrink:0;text-align:right;line-height:1.4}
+.ste-label{min-width:130px;max-width:130px;font-size:10px;color:var(--muted);font-family:var(--mono);padding:.42rem .4rem;flex-shrink:0;text-align:right;line-height:1.4}
 .ste-value{flex:1;min-width:0;font-size:11px;color:var(--text);font-family:var(--mono);padding:.35rem .6rem;background:var(--surface);border:1.5px solid var(--border);border-radius:4px;transition:border-color .15s,background .15s}
 .ste-flag-icon{font-size:11px;padding:.35rem .2rem;flex-shrink:0;opacity:0;transition:opacity .15s}
 .ste-row.ste-flagged .ste-value{border-color:#f0b429;background:#f0b42918}
@@ -6022,7 +6022,7 @@ html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:va
 .ste-row.ste-revealed-correct .ste-value{border-color:var(--accent2);background:#4fd1b018}
 .ste-row.ste-revealed-missed .ste-value{border-color:#ef4444;background:#ef444415}
 .ste-row.ste-revealed-false .ste-value{border-color:#f0b429;background:#f0b42915}
-.ste-reveal-note{display:none;flex-basis:100%;font-size:10px;font-style:italic;color:var(--muted);padding:.35rem .5rem .35rem calc(155px + .7rem);line-height:1.5}
+.ste-reveal-note{display:none;flex-basis:100%;font-size:10px;font-style:italic;color:var(--muted);padding:.35rem .5rem .35rem calc(130px + .7rem);line-height:1.5}
 .ste-row.ste-revealed-correct .ste-reveal-note,.ste-row.ste-revealed-missed .ste-reveal-note,.ste-row.ste-revealed-false .ste-reveal-note{display:block}
 .ste-row.ste-revealed-correct .ste-reveal-note{color:var(--accent2)}
 .ste-row.ste-revealed-missed .ste-reveal-note{color:#ef4444}
@@ -6034,10 +6034,15 @@ html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:va
 .ste-po-sub{margin-left:auto;font-size:9px;font-family:var(--mono);color:var(--muted);font-style:italic;white-space:nowrap}
 .ste-po-fields{padding:.45rem .65rem}
 .ste-po-row{display:flex;align-items:baseline;gap:.4rem;margin-bottom:3px;padding:.18rem .3rem}
-.ste-po-label{min-width:155px;max-width:155px;font-size:10px;color:var(--muted);font-family:var(--mono);text-align:right;flex-shrink:0;padding:.15rem .4rem}
+.ste-po-label{min-width:130px;max-width:130px;font-size:10px;color:var(--muted);font-family:var(--mono);text-align:right;flex-shrink:0;padding:.15rem .4rem}
 .ste-po-value{flex:1;font-size:11px;color:var(--text);font-family:var(--mono);padding:.18rem .6rem;background:var(--surface);border:1.5px solid #f0b42933;border-radius:4px}
 .ste-po-divider{font-size:9px;font-family:var(--mono);color:var(--muted);text-align:center;margin:.55rem 0 .5rem;letter-spacing:.08em;text-transform:uppercase;display:flex;align-items:center;gap:.5rem}
 .ste-po-divider::before,.ste-po-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+/* Side-by-side layout */
+.ste-compare-wrap{display:flex;gap:.75rem;align-items:flex-start}
+.ste-compare-wrap .ste-po-doc{flex:1;min-width:0;margin-bottom:0}
+.ste-compare-wrap .ste-form-doc{flex:1;min-width:0}
+@media(max-width:860px){.ste-compare-wrap{flex-direction:column}.ste-compare-wrap .ste-po-doc{margin-bottom:.65rem}}
 .ste-row.ste-revealed-false .ste-reveal-note{color:var(--warn)}
 </style>
 
@@ -8893,19 +8898,21 @@ function steInit(day) {
     const poFields = data.po.fields.map(function(f) {
       return '<div class="ste-po-row"><span class="ste-po-label">' + f.label + '</span><span class="ste-po-value">' + f.value + '</span></div>';
     }).join('');
-    poHtml =
-      '<div class="ste-po-doc">' +
+    poHtml = '<div class="ste-po-doc">' +
         '<div class="ste-po-hdr">' +
           '<span class="ste-po-badge">CUSTOMER PO</span>' +
           '<span class="ste-po-title">' + data.po.title + '</span>' +
-          '<span class="ste-po-sub">Reference — compare to the ' + (data.po.doctype || 'record') + ' below ↓</span>' +
+          '<span class="ste-po-sub">← Reference document</span>' +
         '</div>' +
         '<div class="ste-po-fields">' + poFields + '</div>' +
       '</div>';
   }
 
+  const wrapOpen  = data.po ? '<div class="ste-compare-wrap">' : '';
+  const wrapClose = data.po ? '</div>' : '';
+
   // Build the document frame with header, setup banner, and a fields container
-  doc.innerHTML = poHtml +
+  doc.innerHTML = wrapOpen + poHtml +
     '<div class="ste-form-doc">' +
       '<div class="ste-form-hdr">' +
         '<div class="ste-form-hdr-top">' +
@@ -8921,7 +8928,7 @@ function steInit(day) {
         '<span class="ste-form-setup-count">Find ' + errorCount + ' error' + (errorCount !== 1 ? 's' : '') + '</span>' +
       '</div>' +
       '<div class="ste-form-fields" id="ste-' + day + '-fields"></div>' +
-    '</div>';
+    '</div>' + wrapClose;
 
   const fieldsEl = document.getElementById('ste-' + day + '-fields');
   data.rows.forEach(function(row, idx) {
