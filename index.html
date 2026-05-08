@@ -396,6 +396,40 @@ html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:va
 .po-doc-footer-item{font-size:11px;color:#1a1a2e}
 .po-doc-footer-item strong{font-size:13px}
 .po-doc-footer-total{font-size:13px;font-weight:700;color:#1a1a2e;font-family:var(--mono)}
+/* ── BILL OF LADING DOCUMENT ── */
+.po-bol-side-wrap{display:flex;gap:.75rem;align-items:flex-start;margin:1.25rem 0 .5rem}
+.po-bol-side-wrap .po-ref-wrap{flex:1;min-width:0;margin:0}
+@media(max-width:900px){.po-bol-side-wrap{flex-direction:column}}
+.bol-doc{background:#f5f7fa;border:1px solid #b0b8cc;border-radius:6px;overflow:hidden;font-size:10px;color:#1a1a2e;line-height:1.4}
+.bol-hdr{background:#1e2a4a;padding:.55rem .8rem;border-bottom:2px solid #2d3f6e}
+.bol-hdr-title{font-size:11px;font-weight:700;color:#fff;letter-spacing:.05em;text-align:center;text-transform:uppercase}
+.bol-hdr-sub{font-size:8.5px;color:#8fa0c8;text-align:center;letter-spacing:.08em;margin-top:1px}
+.bol-hdr-meta{display:flex;justify-content:space-between;align-items:center;margin-top:.4rem;padding-top:.35rem;border-top:1px solid #2d3f6e}
+.bol-hdr-carrier{font-size:9px;color:#c8d4f0;font-weight:600}
+.bol-hdr-num{font-size:9px;color:#c8d4f0;font-family:var(--mono)}
+.bol-section{padding:.45rem .7rem;border-bottom:1px solid #d0d6e4}
+.bol-section:last-child{border-bottom:none}
+.bol-row{display:flex;gap:.5rem;margin-bottom:3px}
+.bol-label{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#5a6480;min-width:90px;max-width:90px;flex-shrink:0;padding-top:1px}
+.bol-val{font-size:9.5px;color:#1a1a2e;font-family:var(--mono)}
+.bol-divider{height:1px;background:#d0d6e4;margin:.3rem 0}
+.bol-table{width:100%;border-collapse:collapse}
+.bol-table th{background:#2d3f6e;color:#c8d4f0;font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;padding:4px 6px;text-align:left}
+.bol-table td{padding:4px 6px;border-bottom:1px solid #e0e4ee;font-size:9px;color:#1a1a2e;font-family:var(--mono)}
+.bol-table tr:last-child td{border-bottom:none}
+.bol-table .td-r{text-align:right}
+.bol-meas-table{width:100%;border-collapse:collapse;margin-top:.35rem}
+.bol-meas-table th{background:#e8ebf2;color:#3a4560;font-size:8px;font-weight:700;text-transform:uppercase;padding:3px 6px;border:1px solid #c8cedd;text-align:center}
+.bol-meas-table td{padding:3px 6px;border:1px solid #d4d8e4;font-size:9px;color:#1a1a2e;font-family:var(--mono);text-align:center}
+.bol-footer{background:#e8ebf2;border-top:2px solid #2d3f6e;padding:.45rem .7rem;display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem}
+.bol-footer-sig{font-size:8.5px;color:#3a4560}
+.bol-footer-sig strong{display:block;font-size:9.5px;color:#1a1a2e;margin-top:2px}
+.bol-footer-note{font-size:8px;color:#5a6480;text-align:right;font-style:italic;max-width:110px;line-height:1.4}
+.bol-totals{display:flex;gap:1rem;align-items:center}
+.bol-total-item{text-align:center}
+.bol-total-lbl{font-size:7.5px;color:#5a6480;text-transform:uppercase;letter-spacing:.05em}
+.bol-total-val{font-size:11px;font-weight:700;color:#1a1a2e;font-family:var(--mono)}
+.bol-badge-collect{display:inline-block;background:#1e2a4a;color:#c8d4f0;font-size:8px;font-weight:700;padding:2px 7px;border-radius:3px;letter-spacing:.06em;text-transform:uppercase}
 /* ── SUPPLEMENTAL EXERCISES (DAY 5) ── */
 .ex-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem 1.5rem;margin-bottom:1rem}
 .ex-input{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:5px 9px;font-size:11px;color:var(--text);font-family:var(--font);width:100%;box-sizing:border-box;outline:none;transition:border-color .15s}
@@ -4255,53 +4289,137 @@ html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:va
               <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Invoice Olympic Steel for CTL + leveling processing fee only ($1,723.38) &mdash; confirm <strong>no material charge</strong> on invoice &mdash; log invoice# in tracker</div><span class="step-dept">Sales</span></div>
             </div>
             <div>
-              <div class="po-ref-wrap">
-                <div class="po-ref-lbl">Customer PO &mdash; Olympic Steel Inc #815992</div>
-                <div class="po-doc">
-                  <div class="po-doc-hdr">
-                    <div class="po-doc-co">Olympic Steel Inc</div>
-                    <div class="po-doc-po">
-                      <div class="po-doc-po-label">OP Purchase Order</div>
-                      <div class="po-doc-po-num">815992</div>
-                      <div class="po-doc-po-date">01/28/26 &nbsp;&bull;&nbsp; Buyer: Steele, Kendall &nbsp;&bull;&nbsp; Vendor: 301086-004</div>
+              <div class="po-bol-side-wrap">
+                <div class="po-ref-wrap">
+                  <div class="po-ref-lbl">Customer PO &mdash; Olympic Steel Inc #815992</div>
+                  <div class="po-doc">
+                    <div class="po-doc-hdr">
+                      <div class="po-doc-co">Olympic Steel Inc</div>
+                      <div class="po-doc-po">
+                        <div class="po-doc-po-label">OP Purchase Order</div>
+                        <div class="po-doc-po-num">815992</div>
+                        <div class="po-doc-po-date">01/28/26 &nbsp;&bull;&nbsp; Buyer: Steele, Kendall &nbsp;&bull;&nbsp; Vendor: 301086-004</div>
+                      </div>
+                    </div>
+                    <div class="po-doc-parties">
+                      <div>
+                        <div class="po-doc-party-lbl">Processor (Vendor)</div>
+                        <div class="po-doc-party-val">Steel Warehouse Company<br>600 River Terminal<br>Chattanooga, TN 37406</div>
+                      </div>
+                      <div>
+                        <div class="po-doc-party-lbl">Ship To / Pickup</div>
+                        <div class="po-doc-party-val">Olympic Steel Inc<br>3525 Gravel Springs Rd<br>Buford, GA 30519<br><em style="font-size:9px">Pickup &ndash; Truck &nbsp;&bull;&nbsp; FOB: Shipping Point</em></div>
+                      </div>
+                    </div>
+                    <div style="background:var(--warn);color:#000;font-weight:700;font-size:10px;text-align:center;padding:3px 8px;border-radius:4px;margin-bottom:6px">REQUIRED ON: 01/29/2026 &mdash; 1-DAY TURNAROUND</div>
+                    <table class="po-doc-table">
+                      <thead><tr><th>Item</th><th>Description</th><th>Qty</th><th>$/CWT</th><th>Process</th><th>Amount</th></tr></thead>
+                      <tbody>
+                        <tr>
+                          <td>1893814</td>
+                          <td>HR P&amp;O Sheet EN 10149-2/S700MC<br>
+                            <em style="font-size:9px">.3819&Prime; NOM &times; 60.0000&Prime; MIN &times; 120.0000&Prime; MIN &mdash; 52 PCS<br>
+                            Level to 60&times;120 &nbsp;&bull;&nbsp; Yield ref: 578<br>
+                            4&times;4 blocking &nbsp;&bull;&nbsp; 5K max bundle &nbsp;&bull;&nbsp; Width banding</em>
+                          </td>
+                          <td>40,550 LB</td>
+                          <td>$4.25</td>
+                          <td>CTL (Step 10)</td>
+                          <td>$1,723.38</td>
+                        </tr>
+                        <tr><td colspan="5" style="font-size:9px;color:var(--muted)">Terms: Net 45 &nbsp;&bull;&nbsp; Freight: Pickup / Truck &nbsp;&bull;&nbsp; FOB: Shipping Point &nbsp;&bull;&nbsp; Processing fee only &mdash; customer owns material</td><td></td></tr>
+                      </tbody>
+                    </table>
+                    <div class="po-doc-footer">
+                      <div class="po-doc-footer-item">Terms: Net 45 &nbsp;&bull;&nbsp; FOB: Shipping Point &nbsp;&bull;&nbsp; Freight: $0.00</div>
+                      <div class="po-doc-footer-total">Total: $1,723.38</div>
                     </div>
                   </div>
-                  <div class="po-doc-parties">
-                    <div>
-                      <div class="po-doc-party-lbl">Processor (Vendor)</div>
-                      <div class="po-doc-party-val">Steel Warehouse Company<br>600 River Terminal<br>Chattanooga, TN 37406</div>
+                </div>
+                <div class="po-ref-wrap">
+                  <div class="po-ref-lbl">Inbound Receiver &mdash; Bill of Lading (toll coil receipt)</div>
+                  <div class="bol-doc">
+                    <div class="bol-hdr">
+                      <div class="bol-hdr-title">Straight Bill of Lading &ndash; Short Form</div>
+                      <div class="bol-hdr-sub">ORIGINAL &mdash; NOT NEGOTIABLE</div>
+                      <div class="bol-hdr-meta">
+                        <span class="bol-hdr-carrier">Carrier: M&amp;M 25 TRUCKING</span>
+                        <span class="bol-hdr-num">PICKUP NO: 545214</span>
+                      </div>
                     </div>
-                    <div>
-                      <div class="po-doc-party-lbl">Ship To / Pickup</div>
-                      <div class="po-doc-party-val">Olympic Steel Inc<br>3525 Gravel Springs Rd<br>Buford, GA 30519<br><em style="font-size:9px">Pickup &ndash; Truck &nbsp;&bull;&nbsp; FOB: Shipping Point</em></div>
+                    <div class="bol-section">
+                      <div class="bol-row">
+                        <span class="bol-label">From</span>
+                        <span class="bol-val">Steel Warehouse Alabama<br>100 Industrial Park Dr.<br>Calvert, AL 36513</span>
+                      </div>
+                      <div class="bol-divider"></div>
+                      <div class="bol-row">
+                        <span class="bol-label">Sold To</span>
+                        <span class="bol-val">Olympic Steel</span>
+                      </div>
+                      <div class="bol-row">
+                        <span class="bol-label">Ship To</span>
+                        <span class="bol-val">Olympic Steel<br>587 Barrow Park Drive<br>Winder, GA 30680</span>
+                      </div>
+                      <div class="bol-divider"></div>
+                      <div class="bol-row">
+                        <span class="bol-label">Sales Order No.</span>
+                        <span class="bol-val">007A7492</span>
+                      </div>
+                      <div class="bol-row">
+                        <span class="bol-label">Customer PO No.</span>
+                        <span class="bol-val">845215</span>
+                      </div>
+                      <div class="bol-row">
+                        <span class="bol-label">Date Shipped</span>
+                        <span class="bol-val">01/27/26</span>
+                      </div>
                     </div>
-                  </div>
-                  <div style="background:var(--warn);color:#000;font-weight:700;font-size:10px;text-align:center;padding:3px 8px;border-radius:4px;margin-bottom:6px">REQUIRED ON: 01/29/2026 &mdash; 1-DAY TURNAROUND</div>
-                  <table class="po-doc-table">
-                    <thead><tr><th>Item</th><th>Description</th><th>Qty</th><th>$/CWT</th><th>Process</th><th>Amount</th></tr></thead>
-                    <tbody>
-                      <tr>
-                        <td>1893814</td>
-                        <td>HR P&amp;O Sheet EN 10149-2/S700MC<br>
-                          <em style="font-size:9px">.3819&Prime; NOM &times; 60.0000&Prime; MIN &times; 120.0000&Prime; MIN &mdash; 52 PCS<br>
-                          Level to 60&times;120 &nbsp;&bull;&nbsp; Yield ref: 578<br>
-                          4&times;4 blocking &nbsp;&bull;&nbsp; 5K max bundle &nbsp;&bull;&nbsp; Width banding</em>
-                        </td>
-                        <td>40,550 LB</td>
-                        <td>$4.25</td>
-                        <td>CTL (Step 10)</td>
-                        <td>$1,723.38</td>
-                      </tr>
-                      <tr><td colspan="5" style="font-size:9px;color:var(--muted)">Terms: Net 45 &nbsp;&bull;&nbsp; Freight: Pickup / Truck &nbsp;&bull;&nbsp; FOB: Shipping Point &nbsp;&bull;&nbsp; Processing fee only &mdash; customer owns material</td><td></td></tr>
-                    </tbody>
-                  </table>
-                  <div class="po-doc-footer">
-                    <div class="po-doc-footer-item">Terms: Net 45 &nbsp;&bull;&nbsp; FOB: Shipping Point &nbsp;&bull;&nbsp; Freight: $0.00</div>
-                    <div class="po-doc-footer-total">Total: $1,723.38</div>
+                    <div class="bol-section" style="padding-bottom:.5rem">
+                      <table class="bol-table">
+                        <thead>
+                          <tr><th>SWI No.</th><th>Mill Coil</th><th>Description</th><th class="td-r">KG Wt</th><th class="td-r">LB Wt</th></tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>OS00035A</td>
+                            <td>5457773</td>
+                            <td>.3819 HR 60.0000&Prime; COIL<br><em style="font-size:8px;color:#5a6480">RECVD WT: 40,620</em></td>
+                            <td class="td-r">18,425</td>
+                            <td class="td-r">40,620</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      <table class="bol-meas-table">
+                        <thead>
+                          <tr><th>Measurement</th><th>SWCHT</th><th>ID</th><th>OD</th></tr>
+                        </thead>
+                        <tbody>
+                          <tr><td>Gauge</td><td>.388</td><td colspan="2">.389</td></tr>
+                          <tr><td>Width</td><td>60.000</td><td colspan="2">60.500</td></tr>
+                          <tr><td>Size</td><td colspan="3">30</td></tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="bol-footer">
+                      <div>
+                        <div class="bol-totals">
+                          <div class="bol-total-item"><div class="bol-total-lbl">Coils</div><div class="bol-total-val">1</div></div>
+                          <div class="bol-total-item"><div class="bol-total-lbl">Pieces</div><div class="bol-total-val">1</div></div>
+                          <div class="bol-total-item"><div class="bol-total-lbl">KG Wt</div><div class="bol-total-val">18,425</div></div>
+                          <div class="bol-total-item"><div class="bol-total-lbl">LB Wt</div><div class="bol-total-val">40,620</div></div>
+                        </div>
+                        <div style="margin-top:.4rem"><span class="bol-badge-collect">COLLECT</span> &nbsp; <span style="font-size:8.5px;color:#3a4560">F.O.B. CALVERT, AL</span></div>
+                      </div>
+                      <div style="text-align:right">
+                        <div class="bol-footer-sig">Driver Signature<strong>Jimmy Thomas</strong><span style="font-size:8px;color:#5a6480">Date: 1-28-26</span></div>
+                        <div class="bol-footer-note">ALL LOADS MUST BE TARPED</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-              <textarea class="up-notes-area" style="margin-top:.75rem" placeholder="Notes — SO#, how you handled the 1-day turnaround, S700MC specialty grade notes, bundling spec compliance, observations..."></textarea>
+              <textarea class="up-notes-area" style="margin-top:.75rem" placeholder="Notes &mdash; SO#, how you handled the 1-day turnaround, S700MC specialty grade notes, bundling spec compliance, observations..."></textarea>
             </div>
           </div>
         </div>
