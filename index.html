@@ -4530,72 +4530,217 @@ html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:va
               <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Load &amp; ship FOB Chattanooga on transport date &mdash; confirm carrier and pickup with shipping desk &mdash; freight is Peak Metals&rsquo; responsibility (FOB Origin) &mdash; attach B/L with all required notations before releasing to carrier</div><span class="step-dept">Shipping</span></div>
               <div class="step-row"><div class="step-check" onclick="ckStep(this)"></div><div class="step-lbl">Invoice Peak Metals for <strong>processing fee only</strong> &mdash; Rate: $5.55/cwt applied to <em>actual invoiceable weight</em> (post-scrap, not full 45,160 lbs) &mdash; Est. total: $2,506.38 (adjust if yield differs) &mdash; Terms: Net 30 &mdash; do not invoice until final yield weight confirmed &mdash; log invoice# in tracker</div><span class="step-dept">Sales</span></div>
             </div>
+            <div>
+              <div class="po-ref-wrap" style="margin-top:0">
+                <div class="po-ref-lbl">Customer PO &mdash; Peak Metals Inc. #NUAL-TA26358/1</div>
+                <div class="po-doc">
+                  <div class="po-doc-hdr">
+                    <div>
+                      <div class="po-doc-co">Peak Metals Inc.</div>
+                      <div style="font-size:10px;color:#9ca3b8;margin-top:2px">2111 Chestnut Ave Suite 210 &bull; Glenview, IL 60025</div>
+                    </div>
+                    <div style="text-align:right">
+                      <div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#9ca3b8;margin-bottom:2px">Purchase Order</div>
+                      <div class="po-doc-po-num">NUAL-TA26358/1</div>
+                      <div style="font-size:10px;color:#9ca3b8;margin-top:2px">Ref: 26358 &nbsp;&bull;&nbsp; Date: 04/07/2026</div>
+                    </div>
+                  </div>
+                  <div class="po-doc-parties">
+                    <div>
+                      <div class="po-doc-party-lbl">Vendor (Processor)</div>
+                      <div class="po-doc-party-val">Steel Warehouse Co., LLC<br>Chattanooga, TN</div>
+                    </div>
+                    <div>
+                      <div class="po-doc-party-lbl">Bill To / Ship To</div>
+                      <div class="po-doc-party-val">Peak Metals Inc.<br>2111 Chestnut Ave Suite 210<br>Glenview, IL 60025</div>
+                    </div>
+                    <div>
+                      <div class="po-doc-party-lbl">Terms &amp; Delivery</div>
+                      <div class="po-doc-party-val">Net 30 days<br>FOB: Chattanooga, TN<br>Delivery: ASAP</div>
+                    </div>
+                  </div>
+                  <table class="po-doc-table">
+                    <thead>
+                      <tr><th>Coil No.</th><th>Grade / Spec</th><th>Operation</th><th>Finished Size</th><th>Tolerances</th><th>Price</th><th>Est. Total</th></tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>5535096</strong><br><em style="font-size:9px">45,160 lbs</em></td>
+                        <td>NuStrength Gr100<br><em style="font-size:9px">ASTM A 656 Gr100<br>/ A 1018 Gr100</em></td>
+                        <td>Temper Pass<br>then CTL<br><em style="font-size:9px">Scrap OD lap<br>+ last 14&prime; ID</em></td>
+                        <td>.250&Prime;&times;60&Prime;&times;240&Prime;<br><em style="font-size:9px">Qty: All (full yield)</em></td>
+                        <td style="font-size:9px">Thk: &plusmn;0.0083&Prime;<br>Lgth: &minus;0/+&frac14;&Prime;<br>Flat: 0.375&Prime; max/3&prime;<br>Aim: dead flat</td>
+                        <td>$5.55/cwt</td>
+                        <td>$2,506.38</td>
+                      </tr>
+                      <tr><td colspan="7" style="font-size:9px;color:var(--muted)">B/L must show: &ldquo;Peak Metals P.O. 26358&rdquo; &bull; pieces and weight per bundle &nbsp;&mdash;&nbsp; Bundles: max 10,000 lbs &bull; 2&times;4 spacers &nbsp;&mdash;&nbsp; Short piece: cut as long as possible &nbsp;&mdash;&nbsp; Processing fee only (customer-owned material)</td></tr>
+                    </tbody>
+                  </table>
+                  <div class="po-doc-footer">
+                    <div class="po-doc-footer-item">Payment: Net 30 days &nbsp;&bull;&nbsp; FOB: Chattanooga, TN &nbsp;&bull;&nbsp; PO# on all shipping docs</div>
+                    <div class="po-doc-footer-total">Est. Total: $2,506.38</div>
+                  </div>
+                </div>
+              </div>
+              <div style="display:flex;gap:.75rem;margin-top:.75rem;align-items:flex-start">
+                <div class="po-ref-wrap" style="flex:1;margin:0">
+                  <div class="po-ref-lbl">Outbound Receiver &mdash; Bill of Lading (Original &middot; Pg 1)</div>
+                  <div class="bol-doc">
+                    <div class="bol-hdr">
+                      <div class="bol-hdr-title">Straight Bill of Lading &ndash; Short Form</div>
+                      <div class="bol-hdr-sub">ORIGINAL &mdash; NOT NEGOTIABLE</div>
+                      <div class="bol-hdr-meta">
+                        <span class="bol-hdr-carrier">Carrier: ESTES EXPRESS LINES</span>
+                        <span class="bol-hdr-num">PICKUP NO: 546820</span>
+                      </div>
+                    </div>
+                    <div class="bol-section">
+                      <div class="bol-row">
+                        <span class="bol-label">From</span>
+                        <span class="bol-val">Steel Warehouse Co., LLC<br>600 River Terminal<br>Chattanooga, TN 37406</span>
+                      </div>
+                      <div class="bol-divider"></div>
+                      <div class="bol-row">
+                        <span class="bol-label">Sold To</span>
+                        <span class="bol-val">Peak Metals Inc.</span>
+                      </div>
+                      <div class="bol-row">
+                        <span class="bol-label">Ship To</span>
+                        <span class="bol-val">Peak Metals Inc.<br>2111 Chestnut Ave Suite 210<br>Glenview, IL 60025</span>
+                      </div>
+                      <div class="bol-divider"></div>
+                      <div class="bol-row">
+                        <span class="bol-label">Sales Order No.</span>
+                        <span class="bol-val">00PM4892</span>
+                      </div>
+                      <div class="bol-row">
+                        <span class="bol-label">Customer PO No.</span>
+                        <span class="bol-val">26358</span>
+                      </div>
+                      <div class="bol-row">
+                        <span class="bol-label">Date Shipped</span>
+                        <span class="bol-val">04/10/26</span>
+                      </div>
+                    </div>
+                    <div class="bol-section" style="padding-bottom:.5rem">
+                      <table class="bol-table">
+                        <thead>
+                          <tr><th>Bundles</th><th>Pieces</th><th>Description &mdash; Peak Metals P.O. 26358</th><th class="td-r">KG Wt</th><th class="td-r">LB Wt</th></tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>5</td>
+                            <td>42</td>
+                            <td>.2500 NuStrength Gr100<br>60.000&Prime;&times;240.000&Prime; SHEETS<br><em style="font-size:8px;color:#5a6480">Coil Ref: 5535096 &nbsp;&bull;&nbsp; ASTM A 656 Gr100<br>2&times;4 spacers between layers &nbsp;&bull;&nbsp; max 10K LB/bundle</em></td>
+                            <td class="td-r">19,558</td>
+                            <td class="td-r">43,120</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      <table class="bol-meas-table">
+                        <thead>
+                          <tr><th>Measurement</th><th>Spec (SWCHT)</th><th>Actual</th></tr>
+                        </thead>
+                        <tbody>
+                          <tr><td>Gauge</td><td>.2500</td><td>.2510</td></tr>
+                          <tr><td>Width</td><td>60.000</td><td>60.125</td></tr>
+                          <tr><td>Length</td><td>240.000</td><td>240.125</td></tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="bol-footer">
+                      <div>
+                        <div class="bol-totals">
+                          <div class="bol-total-item"><div class="bol-total-lbl">Bundles</div><div class="bol-total-val">5</div></div>
+                          <div class="bol-total-item"><div class="bol-total-lbl">Pieces</div><div class="bol-total-val">42</div></div>
+                          <div class="bol-total-item"><div class="bol-total-lbl">KG Wt</div><div class="bol-total-val">19,558</div></div>
+                          <div class="bol-total-item"><div class="bol-total-lbl">LB Wt</div><div class="bol-total-val">43,120</div></div>
+                        </div>
+                        <div style="margin-top:.4rem"><span class="bol-badge-collect">COLLECT</span> &nbsp; <span style="font-size:8.5px;color:#3a4560">F.O.B. CHATTANOOGA, TN</span></div>
+                      </div>
+                      <div style="text-align:right">
+                        <div class="bol-footer-sig">Shipper (SWC)<strong>by SWCI</strong><span style="font-size:8px;color:#5a6480">Date: 4-10-26</span></div>
+                        <div class="bol-footer-note">B/L must show P.O. 26358 &amp; pcs/wt per bundle</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="po-ref-wrap" style="flex:1;margin:0">
+                  <div class="po-ref-lbl">Outbound Receiver &mdash; Bill of Lading (Shipper&rsquo;s Copy &middot; Pg 4)</div>
+                  <div class="bol-doc">
+                    <div class="bol-hdr">
+                      <div class="bol-hdr-title">Straight Bill of Lading &ndash; Short Form</div>
+                      <div class="bol-hdr-sub">SHIPPER&rsquo;S COPY &mdash; PAGE 4</div>
+                      <div class="bol-hdr-meta">
+                        <span class="bol-hdr-carrier">Carrier: ESTES EXPRESS LINES</span>
+                        <span class="bol-hdr-num">PICKUP NO: 546820</span>
+                      </div>
+                    </div>
+                    <div class="bol-section">
+                      <div class="bol-row">
+                        <span class="bol-label">From</span>
+                        <span class="bol-val">Steel Warehouse Co., LLC<br>600 River Terminal<br>Chattanooga, TN 37406</span>
+                      </div>
+                      <div class="bol-divider"></div>
+                      <div class="bol-row">
+                        <span class="bol-label">Sold To</span>
+                        <span class="bol-val">Peak Metals Inc.</span>
+                      </div>
+                      <div class="bol-row">
+                        <span class="bol-label">Ship To</span>
+                        <span class="bol-val">Peak Metals Inc.<br>2111 Chestnut Ave Suite 210<br>Glenview, IL 60025</span>
+                      </div>
+                      <div class="bol-divider"></div>
+                      <div class="bol-row">
+                        <span class="bol-label">Sales Order No.</span>
+                        <span class="bol-val">00PM4892</span>
+                      </div>
+                      <div class="bol-row">
+                        <span class="bol-label">Customer PO No.</span>
+                        <span class="bol-val">26358</span>
+                      </div>
+                      <div class="bol-row">
+                        <span class="bol-label">Date Shipped</span>
+                        <span class="bol-val">04/10/26</span>
+                      </div>
+                    </div>
+                    <div class="bol-section" style="padding-bottom:.5rem">
+                      <table class="bol-table">
+                        <thead>
+                          <tr><th>Bundles</th><th>Pieces</th><th>Description &mdash; Peak Metals P.O. 26358</th><th class="td-r">KG Wt</th><th class="td-r">LB Wt</th></tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>5</td>
+                            <td>42</td>
+                            <td>.2500 NuStrength Gr100<br>60.000&Prime;&times;240.000&Prime; SHEETS<br><em style="font-size:8px;color:#5a6480">Coil Ref: 5535096 &nbsp;&bull;&nbsp; ASTM A 656 Gr100<br>2&times;4 spacers between layers &nbsp;&bull;&nbsp; max 10K LB/bundle</em></td>
+                            <td class="td-r">19,558</td>
+                            <td class="td-r">43,120</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="bol-footer">
+                      <div>
+                        <div class="bol-totals">
+                          <div class="bol-total-item"><div class="bol-total-lbl">Bundles</div><div class="bol-total-val">5</div></div>
+                          <div class="bol-total-item"><div class="bol-total-lbl">Pieces</div><div class="bol-total-val">42</div></div>
+                          <div class="bol-total-item"><div class="bol-total-lbl">KG Wt</div><div class="bol-total-val">19,558</div></div>
+                          <div class="bol-total-item"><div class="bol-total-lbl">LB Wt</div><div class="bol-total-val">43,120</div></div>
+                        </div>
+                        <div style="margin-top:.4rem"><span class="bol-badge-collect">COLLECT</span> &nbsp; <span style="font-size:8.5px;color:#3a4560">F.O.B. CHATTANOOGA, TN</span></div>
+                      </div>
+                      <div style="text-align:right">
+                        <div class="bol-footer-sig">Received by:<strong>&nbsp;</strong><span style="font-size:8px;color:#5a6480;border-top:1px solid #8fa0c8;display:block;margin-top:14px;padding-top:2px">Signature / Date</span></div>
+                        <div class="bol-footer-note">B/L must show P.O. 26358 &amp; pcs/wt per bundle</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <textarea class="up-notes-area" style="margin-top:.75rem" placeholder="Notes &mdash; SO#, yield weight after OD/ID scrap, bundle count and weights, B/L notations (P.O. 26358 + pcs/wt per bundle), actual invoice amount vs. estimate, observations on temper pass + CTL dual-operation sequencing..."></textarea>
+            </div>
           </div>
-
-          <!-- PO Document replica -->
-          <div class="po-doc" style="margin-top:1rem">
-            <div class="po-doc-hdr">
-              <div>
-                <div class="po-doc-co">Peak Metals Inc.</div>
-                <div class="po-doc-addr">2111 Chestnut Ave Suite 210 &bull; Glenview, IL 60025</div>
-              </div>
-              <div style="text-align:right">
-                <div class="po-doc-title">PURCHASE ORDER</div>
-                <div class="po-doc-meta">PO# <strong>NUAL-TA26358/1</strong> &nbsp;&bull;&nbsp; Ref: 26358</div>
-                <div class="po-doc-meta">Date: 04/07/2026</div>
-              </div>
-            </div>
-            <div class="po-doc-parties">
-              <div>
-                <div class="po-doc-label">Vendor (Processor)</div>
-                <div>Steel Warehouse Co., LLC</div>
-                <div>Chattanooga, TN</div>
-              </div>
-              <div>
-                <div class="po-doc-label">Bill To / Ship To</div>
-                <div>Peak Metals Inc.</div>
-                <div>2111 Chestnut Ave Suite 210</div>
-                <div>Glenview, IL 60025</div>
-              </div>
-              <div>
-                <div class="po-doc-label">Terms &amp; Delivery</div>
-                <div>Net 30 days</div>
-                <div>FOB: Chattanooga, TN</div>
-                <div>Delivery: ASAP</div>
-              </div>
-            </div>
-            <table class="po-doc-table">
-              <thead>
-                <tr>
-                  <th>Coil No.</th>
-                  <th>Grade / Spec</th>
-                  <th>Operation</th>
-                  <th>Finished Size</th>
-                  <th>Tolerances</th>
-                  <th>Price</th>
-                  <th>Est. Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><strong>5535096</strong><br><em style="font-size:9px">45,160 lbs</em></td>
-                  <td>NuStrength Gr100<br><em style="font-size:9px">ASTM A 656 Gr100<br>/ A 1018 Gr100</em></td>
-                  <td>Temper Pass<br>then CTL<br><em style="font-size:9px">Scrap OD lap<br>+ last 14&prime; ID</em></td>
-                  <td>.250&Prime;&times;60&Prime;&times;240&Prime;<br><em style="font-size:9px">Qty: All (full yield)</em></td>
-                  <td style="font-size:9px">Thk: &plusmn;0.0083&Prime;<br>Lgth: &minus;0/+&frac14;&Prime;<br>Flat: 0.375&Prime; max/3&prime;<br>Aim: dead flat</td>
-                  <td>$5.55/cwt</td>
-                  <td>$2,506.38</td>
-                </tr>
-                <tr><td colspan="7" style="font-size:9px;color:var(--muted)">B/L must show: &ldquo;Peak Metals P.O. 26358&rdquo; &bull; pieces and weight per bundle &nbsp;&mdash;&nbsp; Bundles: max 10,000 lbs &bull; 2&times;4 spacers &nbsp;&mdash;&nbsp; Short piece: cut as long as possible &nbsp;&mdash;&nbsp; Processing fee only (customer-owned material)</td></tr>
-              </tbody>
-            </table>
-            <div class="po-doc-footer">
-              <div class="po-doc-footer-item">Payment: Net 30 days &nbsp;&bull;&nbsp; FOB: Chattanooga, TN &nbsp;&bull;&nbsp; PO# on all shipping docs</div>
-              <div class="po-doc-footer-total">Est. Total: $2,506.38</div>
-            </div>
-          </div>
-
-          <textarea class="up-notes-area" style="margin-top:.75rem" placeholder="Notes — SO#, yield weight after OD/ID scrap, bundle count and weights, B/L notations (P.O. 26358 + pcs/wt per bundle), actual invoice amount vs. estimate, observations on temper pass + CTL dual-operation sequencing..."></textarea>
         </div>
       </div>
 
