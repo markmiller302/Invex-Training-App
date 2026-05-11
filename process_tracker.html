@@ -317,6 +317,79 @@ function setupUser(){
 }
 function switchUser(){location.reload();}
 
+// ── CreateJobSet ──
+    function createJobSetReal(sid, idx) {
+        var orderItem;
+        var orderSubItem;
+        var productionPieces;
+        var productionMeasure;
+        var productionWeight;
+    
+        // Selecting the input element and get its value
+        var inputName = "inp_" + sid + "_" + idx;
+        var inputVal = document.getElementById(inputName).value;
+    
+        const myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        myHeaders.append("database", "tststw");
+        myHeaders.append("Authorization", "Bearer eyJraWQiOiJSVEViYzVcL1ljRGFJUmVEbkdoN01DR01TUGtJSTA0Q29iQytDS3VzSVc2RT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIzNjRwczN0Y2U3ZnM4MWFnbWx2Y3ZjdG8xZyIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoidHJhbnNhY3Rpb25zXC91cGRhdGUgdHJhbnNhY3Rpb25zXC9yZWFkIiwiYXV0aF90aW1lIjoxNzc4NDg1OTg3LCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuY2EtY2VudHJhbC0xLmFtYXpvbmF3cy5jb21cL2NhLWNlbnRyYWwtMV9nTWRaV0ZISlkiLCJleHAiOjE3Nzg1MjkxODcsImlhdCI6MTc3ODQ4NTk4NywidmVyc2lvbiI6MiwianRpIjoiOWMzOWVmMzItZjUwNy00MmNmLWI5ZmItMDk2NjcyNDhhMWYzIiwiY2xpZW50X2lkIjoiMzY0cHMzdGNlN2ZzODFhZ21sdmN2Y3RvMWcifQ.fQ-ghsj3SKs0sSQdvdUveL6qb3RiGORgYTbns5zimrmQQLTmU1f7kOt6f4ZUn91StdY959A43RZvTuOXupp-FNW_QDE6Re3cYaLYq0D_h67t-6QHR674HDL_5lQ6gdvA8l0KN9DwZcV43jCXCXQAhFd3TL48QAgfxWlS5BQ-BMtKkynZJrcfJ5ajTPrhafQEug4D2JqvCKkWWTRSzamvWvKb_rLzLh0b9jlZ7-uggOk9h0ZugncmGtlOeerXjOJbvpgNahEkC4IhWno84ZlmqzEQpuX5JCzLNXZSsm40Qi7mj9VKzRvVUrfZSPH2O_ZGHbAQ6I-ZnNEab-YhLUvzYg");
+    
+        const raw = JSON.stringify({
+            "sql": "select xrh_ord_itm, xrh_ord_rls_no, xrh_rls_pcs, xrh_rls_msr, xrh_rls_wgt from ortxrh_rec where xrh_ord_no = " + inputVal
+        });
+    
+        const requestOptions = {
+            method: "POST",
+            headers: myHeaders,
+            body: raw,
+            redirect: "follow"
+        };
+
+        //fetch("http://steelwarehouse.invex.cloud/qa/api/sql", requestOptions)
+        //    .then((response) => response.text())
+        //    .then((result) => console.log(result))
+        //    .catch((error) => console.error(error));
+
+        fetch("https://steelwarehouse.invex.cloud/qa/api/sql", requestOptions)
+            .then(function (response) {
+                // response.json() returns a promise, use the same .then syntax to work with the results
+                response.json()
+                    .then(function (salesOrders) {
+                        // users is now our actual variable parsed from the json, so we can use it
+                        salesOrders.forEach(function (salesOrder) {
+                            orderItem = salesOrder.xrh_ord_itm;
+                            orderSubItem = salesOrder.xrh_ord_rls_no;
+                            productionPieces = salesOrder.xrh_rls_pcs;
+                            productionMeasure = salesOrder.xrh_rls_msr;
+                            productionWeight = salesOrder.xrh_rls_wgt;
+                        });
+                    });
+            }).catch(err => console.error(err));
+        
+        // TODO: at the end if we get a success from the "CreateJobSet" API use the commitTxn to set the job set number (+8 from the SO# step)
+    }
+
+    function createJobSetFake(sid, idx) {
+        // TODO: update the button text
+        // TODO: update the values of all the steps in between
+        // TODO: update the JS# (2377)
+        var inputName = "cjs_" + sid + "_" + idx;
+        document.getElementById(inputName).innerHTML = "Creating Job Set...";
+        setTimeout(function () { FakeValues(sid, idx); }, 5000);
+        
+    }
+
+    function FakeValues(sid, idx) {
+        commitTxn(sid, idx + 1, "-");
+        commitTxn(sid, idx + 2, "-");
+        commitTxn(sid, idx + 3, "-");
+        commitTxn(sid, idx + 4, "-");
+        commitTxn(sid, idx + 5, "-");
+        commitTxn(sid, idx + 6, "-");
+        commitTxn(sid, idx + 7, "-");
+        commitTxn(sid, idx + 8, "2377");
+    }
+
 // ── TIMER ACTIONS ──
 function startTimer(sid,idx){
   const step=(liveData[sid]||{})[idx]||{};
@@ -568,7 +641,18 @@ function renderMain(){
       }else if(isDone){
         html+=`<div class="elapsed-done">✓ ${fmtElapsed(sd.elapsed)||'<1s'}</div>`;
         if(isMyDept) html+=`<button class="btn-reset" onclick="resetStep('${sid}',${gi})" title="Reset step">↺</button>`;
-      }
+        }
+
+        // Add "+ Job Set" button (only for "Sales Order #" step)
+        if (val && isMyDept && step.name == "Sales Order #") {
+            const xgi = r * stepsLen + i + 8;
+            const xsd = d[xgi] || {};
+            const xval = xsd.txn || '';
+
+            if (!xval) {
+                html += `<button class="btn-start" onclick="createJobSetFake('${sid}',${gi})" id="cjs_${sid}_${gi}" title="Create Job Set" >+ Job Set</button>`;
+            }
+        }
 
       html+='</div>';
       if(sd.who) html+=`<div class="who-lbl">${sd.who}${sd.startTs?' · '+fmtTs(sd.startTs):''}</div>`;
