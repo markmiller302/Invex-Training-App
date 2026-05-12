@@ -370,16 +370,14 @@ function switchUser(){location.reload();}
     }
 
     function createJobSetFake(sid, idx) {
-        // TODO: update the button text
-        // TODO: update the values of all the steps in between
-        // TODO: update the JS# (2377)
-        var inputName = "cjs_" + sid + "_" + idx;
-        document.getElementById(inputName).innerHTML = "Creating Job Set...";
-        setTimeout(function () { FakeValues(sid, idx); }, 5000);
-        
+        var btn = document.getElementById("cjs_" + sid + "_" + idx);
+        var soNum = (document.getElementById("inp_" + sid + "_" + idx) || {}).value || "";
+        if (btn) { btn.innerHTML = "Creating Job Set..."; btn.disabled = true; }
+        setTimeout(function () { FakeValues(sid, idx, soNum.trim()); }, 5000);
     }
 
-    function FakeValues(sid, idx) {
+    function FakeValues(sid, idx, soNum) {
+        // Always fill the 7 Purchasing & Receiving columns with "-"
         commitTxn(sid, idx + 1, "-");
         commitTxn(sid, idx + 2, "-");
         commitTxn(sid, idx + 3, "-");
@@ -387,7 +385,14 @@ function switchUser(){location.reload();}
         commitTxn(sid, idx + 5, "-");
         commitTxn(sid, idx + 6, "-");
         commitTxn(sid, idx + 7, "-");
-        commitTxn(sid, idx + 8, "2377");
+        if (soNum === "3182") {
+            // SO# 3182: return Job Set # 2377, then fill Tag# Final so Sales Transport # becomes active
+            commitTxn(sid, idx + 8, "2377");
+            commitTxn(sid, idx + 9, "-");
+        } else {
+            // Any other SO#: mark Job Set # as not auto-created so button doesn't reappear
+            commitTxn(sid, idx + 8, "-");
+        }
     }
 
 // ── TIMER ACTIONS ──
@@ -650,7 +655,7 @@ function renderMain(){
             const xval = xsd.txn || '';
 
             if (!xval) {
-                html += `<button class="btn-start" onclick="createJobSetFake('${sid}',${gi})" id="cjs_${sid}_${gi}" title="Create Job Set" >+ Job Set</button>`;
+                html += `<button class="btn-start" onclick="createJobSetFake('${sid}',${gi})" id="cjs_${sid}_${gi}">Create Job Set</button>`;
             }
         }
 
